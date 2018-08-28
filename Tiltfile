@@ -1,8 +1,5 @@
 # -*- mode: Python -*-
 
-repo = local_git_repo('./')
-path = '/go/src/github.com/windmilleng/servantes'
-
 def servantes():
   return composite_service([fe, vigoda, fortune])
 
@@ -14,6 +11,8 @@ def service(name, extra_runs=[]):
   image_name = 'windmill.build/servantes/%s' % name
 
   img = build_docker_image('Dockerfile.base', image_name, '/go/bin/%s' % name)
+  path = '/go/src/github.com/windmilleng/servantes/%s' % name
+  repo = local_git_repo('./%s/' % name)
   img.add(path, repo)
 
   for r in extra_runs:
