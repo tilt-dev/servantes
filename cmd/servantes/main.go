@@ -40,7 +40,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = t.Execute(w, nil)
+	err = t.Execute(w, templateData{Services: Services})
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error executing template: %v\n", err),
 			http.StatusInternalServerError)
@@ -81,4 +81,8 @@ func newProxy(service string) *httputil.ReverseProxy {
 
 	}
 	return &httputil.ReverseProxy{Director: director}
+}
+
+type templateData struct {
+	Services []string
 }
