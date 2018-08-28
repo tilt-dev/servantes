@@ -1,0 +1,37 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: servantes
+  labels:
+    app: servantes
+spec:
+  template:
+    metadata:
+      labels:
+        app: servantes
+        tier: web
+    spec:
+      containers:
+      - name: servantes
+        image: windmill.build/servantes/servantes
+        command: ["/go/bin/servantes"]
+        env:
+        - name: TEMPLATE_DIR
+          value: "/go/src/github.com/windmilleng/servantes/web/servantes/templates"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: servantes
+  labels:
+    app: servantes
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: servantes

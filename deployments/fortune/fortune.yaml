@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: fortune
+  labels:
+    app: fortune
+spec:
+  template:
+    metadata:
+      labels:
+        app: fortune
+        tier: web
+    spec:
+      containers:
+      - name: fortune
+        image: windmill.build/servantes/fortune
+        command: ["/go/bin/fortune"]
+        env:
+        - name: TEMPLATE_DIR
+          value: "/go/src/github.com/windmilleng/servantes/web/fortune/templates"
+        ports:
+        - containerPort: 8082
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fortune
+  labels:
+    app: fortune
+spec:
+  ports:
+    - port: 80
+      targetPort: 8082
+      protocol: TCP
+  selector:
+    app: fortune

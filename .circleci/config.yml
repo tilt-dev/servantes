@@ -1,0 +1,10 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: gcr.io/windmill-public-containers/servantes-ci
+    working_directory: /go/src/github.com/windmilleng/servantes
+    steps:
+      - checkout
+      - run: echo 'export PATH=~/go/bin:$PATH' >> $BASH_ENV
+      - run: make all
