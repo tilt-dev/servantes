@@ -8,8 +8,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/duration"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 var Services = []string{
@@ -18,8 +23,19 @@ var Services = []string{
 }
 
 var ProxyMap = make(map[string]*httputil.ReverseProxy, 0)
+var Client *kubernetes.Clientset
 
 func main() {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	Client, err = kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+
 	for _, s := range Services {
 		ProxyMap[s] = newProxy(s)
 	}
@@ -40,12 +56,65 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = t.Execute(w, templateData{Services: Services})
+	services, err := listServices()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error querying pods: %v\n", err),
+			http.StatusInternalServerError)
+		return
+	}
+
+	err = t.Execute(w, templateData{Services: services})
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error executing template: %v\n", err),
 			http.StatusInternalServerError)
 		return
 	}
+}
+
+func listServices() ([]serviceData, error) {
+	serviceMap := make(map[string]serviceData, 0)
+
+	podList, err := Client.CoreV1().Pods("").List(metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, pod := range podList.Items {
+		app := pod.ObjectMeta.Labels["app"]
+		phase := pod.Status.Phase
+		startTime := pod.Status.StartTime.Time
+
+		_, isServantes := ProxyMap[app]
+		if !isServantes {
+			continue
+		}
+
+		existingService := serviceMap[app]
+		if existingService.StartTime.After(startTime) {
+			continue
+		}
+
+		data := serviceData{
+			Name:      app,
+			Phase:     string(phase),
+			StartTime: startTime,
+		}
+		serviceMap[app] = data
+	}
+
+	result := make([]serviceData, 0)
+	for _, service := range Services {
+		data, found := serviceMap[service]
+		if found {
+			result = append(result, data)
+		} else {
+			result = append(result, serviceData{
+				Name:  service,
+				Phase: "Unknown",
+			})
+		}
+	}
+	return result, nil
 }
 
 func templatePath(f string) string {
@@ -84,5 +153,15 @@ func newProxy(service string) *httputil.ReverseProxy {
 }
 
 type templateData struct {
-	Services []string
+	Services []serviceData
+}
+
+type serviceData struct {
+	Name      string
+	Phase     string
+	StartTime time.Time
+}
+
+func (d serviceData) HumanAge() string {
+	return duration.ShortHumanDuration(time.Since(d.StartTime))
 }
