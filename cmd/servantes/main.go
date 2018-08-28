@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -26,15 +27,11 @@ var ProxyMap = make(map[string]*httputil.ReverseProxy, 0)
 var Client *kubernetes.Clientset
 
 func main() {
-	config, err := rest.InClusterConfig()
+	client, err := createK8sClient()
 	if err != nil {
-		panic(err.Error())
+		log.Printf("Error initializing k8s client: %v\n")
 	}
-
-	Client, err = kubernetes.NewForConfig(config)
-	if err != nil {
-		panic(err.Error())
-	}
+	Client = client
 
 	for _, s := range Services {
 		ProxyMap[s] = newProxy(s)
@@ -56,13 +53,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	services, err := listServices()
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error querying pods: %v\n", err),
-			http.StatusInternalServerError)
-		return
-	}
-
+	services := listServices()
 	err = t.Execute(w, templateData{Services: services})
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error executing template: %v\n", err),
@@ -71,10 +62,27 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func listServices() ([]serviceData, error) {
-	serviceMap := make(map[string]serviceData, 0)
+func createK8sClient() (*kubernetes.Clientset, error) {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return nil, err
+	}
 
-	podList, err := Client.CoreV1().Pods("").List(metav1.ListOptions{})
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+}
+
+// List all services in our hard-coded list by querying the k8s api.
+func listServicesFromK8sAPI() (map[string]serviceData, error) {
+	serviceMap := make(map[string]serviceData, 0)
+	if Client == nil {
+		return serviceMap, nil
+	}
+
+	podList, err := Client.CoreV1().Pods("default").List(metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -102,6 +110,18 @@ func listServices() ([]serviceData, error) {
 		serviceMap[app] = data
 	}
 
+	return serviceMap, nil
+}
+
+// Format all services as serviceData objects.
+// Fail back to the hard-coded list if we don't have access to the k8s api.
+func listServices() []serviceData {
+	serviceMap, err := listServicesFromK8sAPI()
+	if err != nil {
+		log.Printf("Error fetching pods: %v\n", err)
+		serviceMap = make(map[string]serviceData, 0)
+	}
+
 	result := make([]serviceData, 0)
 	for _, service := range Services {
 		data, found := serviceMap[service]
@@ -114,7 +134,7 @@ func listServices() ([]serviceData, error) {
 			})
 		}
 	}
-	return result, nil
+	return result
 }
 
 func templatePath(f string) string {
