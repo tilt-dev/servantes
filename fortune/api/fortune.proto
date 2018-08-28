@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package fortune;
+package api;
 
 message Fortune {
   string text = 1;

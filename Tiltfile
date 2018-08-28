@@ -7,7 +7,7 @@ def servantes():
   return composite_service([fe, vigoda, fortune])
 
 def service(name, extra_runs=[]):
-  yaml = local_file('deployments/%s/%s.yaml' % (name, name))
+  yaml = local_file('%s/deployments/%s.yaml' % (name, name))
 
   # right now, Servantes is only intended to work with local docker-for-desktop
   # or minikube, so we just make up an image name
@@ -19,7 +19,7 @@ def service(name, extra_runs=[]):
   for r in extra_runs:
     img.run(r)
 
-  img.run('go install github.com/windmilleng/servantes/cmd/%s' % name)
+  img.run('go install github.com/windmilleng/servantes/%s' % name)
   return k8s_service(yaml, img)
 
 def fe():
@@ -29,7 +29,7 @@ def vigoda():
   return service('vigoda')
 
 def fortune():
-  return service('fortune', ['cd src/github.com/windmilleng/servantes && make proto'])
+  return service('fortune', ['cd src/github.com/windmilleng/servantes/fortune && make proto'])
 
 def local_file(p):
   return local("cat %s" % p)

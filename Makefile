@@ -6,7 +6,7 @@ test: proto
 	go build ./...
 
 proto:
-	protoc --go_out=. -I. api/fortune/fortune.proto
+	cd fortune && make proto
 
 watch:
 	tilt up --watch servantes
