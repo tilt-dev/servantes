@@ -13,3 +13,6 @@
 
 # Ignore generated protos
 api/*/*.pb.go
+
+# Emacs temp files
+.#*
