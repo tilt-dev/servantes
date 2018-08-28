@@ -1,0 +1,32 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: vigoda
+  labels:
+    app: vigoda
+spec:
+  template:
+    metadata:
+      labels:
+        app: vigoda
+        tier: web
+    spec:
+      containers:
+      - name: vigoda
+        image: windmill.build/servantes/vigoda
+        ports:
+        - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vigoda
+  labels:
+    app: vigoda
+spec:
+  ports:
+    - port: 80
+      targetPort: 8081
+      protocol: TCP
+  selector:
+    app: vigoda
