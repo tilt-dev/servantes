@@ -7,11 +7,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/windmilleng/servantes/api/fortune"
+	"github.com/windmilleng/servantes/fortune/api"
 )
 
 func main() {
-	f := fortune.Fortune{Text: "you will have a nice day"}
+	f := api.Fortune{Text: "you will have a nice day"}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		t, err := template.ParseFiles(templatePath("index.tpl"))
@@ -35,7 +35,7 @@ func main() {
 func templatePath(f string) string {
 	dir := os.Getenv("TEMPLATE_DIR")
 	if dir == "" {
-		dir = "web/fortune/templates"
+		dir = "fortune/web/templates"
 	}
 
 	return filepath.Join(dir, f)

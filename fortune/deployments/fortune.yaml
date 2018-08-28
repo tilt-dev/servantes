@@ -17,7 +17,7 @@ spec:
         command: ["/go/bin/fortune"]
         env:
         - name: TEMPLATE_DIR
-          value: "/go/src/github.com/windmilleng/servantes/web/fortune/templates"
+          value: "/go/src/github.com/windmilleng/servantes/fortune/web/templates"
         ports:
         - containerPort: 8082
 ---

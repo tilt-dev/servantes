@@ -140,7 +140,7 @@ func listServices() []serviceData {
 func templatePath(f string) string {
 	dir := os.Getenv("TEMPLATE_DIR")
 	if dir == "" {
-		dir = "web/servantes/templates"
+		dir = "servantes/web/templates"
 	}
 	return filepath.Join(dir, f)
 }
