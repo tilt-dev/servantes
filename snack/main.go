@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"math/rand"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -21,9 +24,31 @@ func main() {
 		}
 
 		rand.Seed(time.Now().Unix())
-		fmt.Fprintf(w, "Your next snack: %s", snacks[rand.Intn(len(snacks))])
+		s := snacks[rand.Intn(len(snacks))]
 
+		t, err := template.ParseFiles(templatePath("index.tpl"))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "error parsing template: %v\n", err)
+			return
+		}
+
+		err = t.Execute(w, s)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "error executing template: %v\n", err)
+			return
+		}
 	})
 
 	http.ListenAndServe(":8083", nil)
+}
+
+func templatePath(f string) string {
+	dir := os.Getenv("TEMPLATE_DIR")
+	if dir == "" {
+		dir = "snack/web/templates"
+	}
+
+	return filepath.Join(dir, f)
 }
