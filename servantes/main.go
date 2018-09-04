@@ -21,6 +21,7 @@ import (
 var Services = []string{
 	"fortune",
 	"vigoda",
+	"doggos",
 }
 
 var ProxyMap = make(map[string]*httputil.ReverseProxy, 0)
