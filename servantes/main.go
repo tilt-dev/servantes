@@ -28,6 +28,15 @@ var ProxyMap = make(map[string]*httputil.ReverseProxy, 0)
 var Client *kubernetes.Clientset
 
 func main() {
+	// We've seen problems where, when keep-alive is enabled,
+	// Servantes keeps talking to old pods even after the endpoints
+	// have been updated. We don't totally understand why this happens (yet!),
+	// but for now we disable keep-alive to make the demo nicer.
+	//
+	// The long-term strategy is to always update containers in-place,
+	// so that there are no old pods to talk to.
+	http.DefaultTransport.(*http.Transport).DisableKeepAlives = true
+
 	client, err := createK8sClient()
 	if err != nil {
 		log.Printf("Error initializing k8s client: %v\n")
