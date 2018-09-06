@@ -22,6 +22,7 @@ import (
 var Services = []string{
 	"fortune",
 	"vigoda",
+	"snack",
 	"doggos",
 }
 

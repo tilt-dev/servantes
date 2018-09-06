@@ -1,7 +1,7 @@
 # -*- mode: Python -*-
 
 def servantes():
-  return composite_service([fe, vigoda, fortune, doggos])
+  return composite_service([fe, vigoda, fortune, doggos, snack])
 
 def service(name, extra_runs=[]):
   yaml = local_file('%s/deployments/%s.yaml' % (name, name))
@@ -27,6 +27,9 @@ def fe():
 def vigoda():
   return service('vigoda')
 
+def snack():
+  return service('snack')
+  
 def doggos():
   return service('doggos')
 

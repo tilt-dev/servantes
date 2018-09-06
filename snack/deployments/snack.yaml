@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: snack
+  labels:
+    app: snack
+spec:
+  template:
+    metadata:
+      labels:
+        app: snack
+        tier: web
+    spec:
+      containers:
+      - name: snack
+        image: windmill.build/servantes/snack
+        command: ["/go/bin/snack"]
+        env:
+        - name: TEMPLATE_DIR
+          value: "/go/src/github.com/windmilleng/servantes/snack/web/templates"
+        ports:
+        - containerPort: 8083
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: snack
+  labels:
+    app: snack
+spec:
+  ports:
+    - port: 80
+      targetPort: 8083
+      protocol: TCP
+  selector:
+    app: snack
