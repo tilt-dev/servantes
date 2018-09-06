@@ -10,7 +10,7 @@ def go_service(name, extra_runs=[]):
   # or minikube, so we just make up an image name
   image_name = 'windmill.build/servantes/%s' % name
 
-  img = build_docker_image('Go.base', image_name, '/go/bin/%s' % name)
+  img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/%s' % name)
   path = '/go/src/github.com/windmilleng/servantes/%s' % name
   repo = local_git_repo('./%s/' % name)
   img.add(path, repo)
@@ -28,7 +28,7 @@ def python_service(name, extra_runs=[]):
   # or minikube, so we just make up an image name
   image_name = 'windmill.build/servantes/%s' % name
 
-  img = build_docker_image('Python.base', image_name, 'python /app/app.py')
+  img = build_docker_image('Dockerfile.py.base', image_name, 'python /app/app.py')
   repo = local_git_repo('./%s/' % name)
   img.add("/app", repo)
 
