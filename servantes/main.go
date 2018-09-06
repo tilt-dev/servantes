@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/duration"
 	"k8s.io/client-go/kubernetes"
@@ -22,12 +23,22 @@ var Services = []string{
 	"fortune",
 	"vigoda",
 	"snack",
+	"doggos",
 }
 
 var ProxyMap = make(map[string]*httputil.ReverseProxy, 0)
 var Client *kubernetes.Clientset
 
 func main() {
+	// We've seen problems where, when keep-alive is enabled,
+	// Servantes keeps talking to old pods even after the endpoints
+	// have been updated. We don't totally understand why this happens (yet!),
+	// but for now we disable keep-alive to make the demo nicer.
+	//
+	// The long-term strategy is to always update containers in-place,
+	// so that there are no old pods to talk to.
+	http.DefaultTransport.(*http.Transport).DisableKeepAlives = true
+
 	client, err := createK8sClient()
 	if err != nil {
 		log.Printf("Error initializing k8s client: %v\n")
@@ -91,7 +102,7 @@ func listServicesFromK8sAPI() (map[string]serviceData, error) {
 	for _, pod := range podList.Items {
 		app := pod.ObjectMeta.Labels["app"]
 		phase := pod.Status.Phase
-		startTime := pod.Status.StartTime.Time
+		bestStartTime := bestStartTime(pod)
 
 		_, isServantes := ProxyMap[app]
 		if !isServantes {
@@ -99,19 +110,37 @@ func listServicesFromK8sAPI() (map[string]serviceData, error) {
 		}
 
 		existingService := serviceMap[app]
-		if existingService.StartTime.After(startTime) {
+		if existingService.StartTime.After(bestStartTime) {
 			continue
 		}
 
 		data := serviceData{
 			Name:      app,
 			Phase:     string(phase),
-			StartTime: startTime,
+			StartTime: bestStartTime,
 		}
 		serviceMap[app] = data
 	}
 
 	return serviceMap, nil
+}
+
+// We want to get the time that best reflects the current age
+// of the container running the service.
+func bestStartTime(pod v1.Pod) time.Time {
+	podStartTime := pod.Status.StartTime.Time
+	bestStartTime := podStartTime
+
+	for _, cStatus := range pod.Status.ContainerStatuses {
+		state := cStatus.State
+		if state.Running != nil {
+			cStartTime := state.Running.StartedAt.Time
+			if cStartTime.After(bestStartTime) {
+				bestStartTime = cStartTime
+			}
+		}
+	}
+	return bestStartTime
 }
 
 // Format all services as serviceData objects.
