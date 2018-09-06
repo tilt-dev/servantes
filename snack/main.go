@@ -46,9 +46,5 @@ func main() {
 
 func templatePath(f string) string {
 	dir := os.Getenv("TEMPLATE_DIR")
-	if dir == "" {
-		dir = "snack/web/templates"
-	}
-
 	return filepath.Join(dir, f)
 }
