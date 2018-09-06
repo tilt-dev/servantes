@@ -41,7 +41,7 @@ func main() {
 
 	client, err := createK8sClient()
 	if err != nil {
-		log.Printf("Error initializing k8s client: %v\n")
+		log.Printf("Error initializing k8s client: %v\n", err)
 	}
 	Client = client
 
