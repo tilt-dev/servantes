@@ -17,7 +17,7 @@ def make_hypothesis():
     benefit = secrets.choice(benefits)
     drawback = secrets.choice(drawbacks)
 
-    return "{} but {}.".format(benefit, drawback)
+    return "{} BUT {}.".format(benefit, drawback)
 
 if __name__ == '__main__':
     print("hello world people!")
