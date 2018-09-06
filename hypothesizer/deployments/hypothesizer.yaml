@@ -1,0 +1,32 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: hypothesizer
+  labels:
+    app: hypothesizer
+spec:
+  template:
+    metadata:
+      labels:
+        app: hypothesizer
+        tier: web
+    spec:
+      containers:
+      - name: hypothesizer
+        image: windmill.build/servantes/hypothesizer
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hypothesizer
+  labels:
+    app: hypothesizer
+spec:
+  ports:
+    - port: 80
+      targetPort: 5000
+      protocol: TCP
+  selector:
+    app: hypothesizer
