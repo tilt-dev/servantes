@@ -1,0 +1,9 @@
+{
+  "name": "spoonerisms",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "immutable": "^3.8.2"
+  }
+}
