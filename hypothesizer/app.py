@@ -5,6 +5,7 @@ app = Flask(__name__)
 benefits = [
     "Jurassic park is real",
     "You can time travel",
+    "You can fall asleep whenever you want",
 ]
 
 drawbacks = [
