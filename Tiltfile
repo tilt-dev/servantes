@@ -13,7 +13,7 @@ def go_service(name, extra_runs=[]):
   img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/%s' % name)
   path = '/go/src/github.com/windmilleng/servantes/%s' % name
   repo = local_git_repo('./%s/' % name)
-  img.add(path, repo)
+  img.add(repo, path)
 
   for r in extra_runs:
     img.run(r)
@@ -30,7 +30,7 @@ def python_service(name, extra_runs=[]):
 
   img = build_docker_image('Dockerfile.py.base', image_name, 'python /app/app.py')
   repo = local_git_repo('./%s/' % name)
-  img.add("/app", repo)
+  img.add(repo, "/app")
 
   for r in extra_runs:
     img.run(r)
@@ -46,7 +46,7 @@ def javascript_service(name, extra_runs=[]):
 
   img = build_docker_image('Dockerfile.js.base', image_name, 'node /app/index.js')
   repo = local_git_repo('./%s/' % name)
-  img.add("/app", repo)
+  img.add(repo, "/app")
 
   for r in extra_runs:
     img.run(r)
