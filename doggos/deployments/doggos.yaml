@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: doggos
-        image: windmill.build/servantes/doggos
+        image: gcr.io/windmill-public-containers/servantes/doggos
         command: ["/go/bin/doggos"]
         env:
         - name: TEMPLATE_DIR

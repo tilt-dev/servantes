@@ -8,7 +8,7 @@ def go_service(name, extra_runs=[]):
 
   # right now, Servantes is only intended to work with local docker-for-desktop
   # or minikube, so we just make up an image name
-  image_name = 'windmill.build/servantes/%s' % name
+  image_name = 'gcr.io/windmill-public-containers/servantes/%s' % name
 
   img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/%s' % name)
   path = '/go/src/github.com/windmilleng/servantes/%s' % name
@@ -24,9 +24,7 @@ def go_service(name, extra_runs=[]):
 def python_service(name, extra_runs=[]):
   yaml = local_file('%s/deployments/%s.yaml' % (name, name))
 
-  # right now, Servantes is only intended to work with local docker-for-desktop
-  # or minikube, so we just make up an image name
-  image_name = 'windmill.build/servantes/%s' % name
+  image_name = 'gcr.io/windmill-public-containers/servantes/%s' % name
 
   img = build_docker_image('Dockerfile.py.base', image_name, 'python /app/app.py')
   repo = local_git_repo('./%s/' % name)
@@ -40,9 +38,7 @@ def python_service(name, extra_runs=[]):
 def javascript_service(name, extra_runs=[]):
   yaml = local_file('%s/deployments/%s.yaml' % (name, name))
 
-  # right now, Servantes is only intended to work with local docker-for-desktop
-  # or minikube, so we just make up an image name
-  image_name = 'windmill.build/servantes/%s' % name
+  image_name = 'gcr.io/windmill-public-containers/servantes/%s' % name
 
   img = build_docker_image('Dockerfile.js.base', image_name, 'node /app/index.js')
   repo = local_git_repo('./%s/' % name)
