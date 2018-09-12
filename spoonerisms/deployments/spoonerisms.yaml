@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: spoonerisms
-        image: windmill.build/servantes/spoonerisms
+        image: gcr.io/windmill-public-containers/servantes/spoonerisms
         ports:
         - containerPort: 5000
 ---

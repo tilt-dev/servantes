@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: vigoda
-        image: windmill.build/servantes/vigoda
+        image: gcr.io/windmill-public-containers/servantes/vigoda
         ports:
         - containerPort: 8081
 ---
