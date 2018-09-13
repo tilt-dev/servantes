@@ -6,8 +6,6 @@ def servantes():
 def go_service(name, extra_runs=[]):
   yaml = local_file('%s/deployments/%s.yaml' % (name, name))
 
-  # right now, Servantes is only intended to work with local docker-for-desktop
-  # or minikube, so we just make up an image name
   image_name = 'gcr.io/windmill-public-containers/servantes/%s' % name
 
   img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/%s' % name)
