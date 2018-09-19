@@ -3,7 +3,7 @@
 def servantes():
   return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms])
 
-def go_service(name, extra_runs=[]):
+def go_service(name, run_fn=None):
   yaml = local_file('%s/deployments/%s.yaml' % (name, name))
 
   image_name = 'gcr.io/windmill-public-containers/servantes/%s' % name
@@ -13,13 +13,13 @@ def go_service(name, extra_runs=[]):
   repo = local_git_repo('.')
   img.add(repo.path('./%s/' % name), path)
 
-  for r in extra_runs:
-    img.run(r)
+  if run_fn:
+    run_fn(img)
 
   img.run('go install github.com/windmilleng/servantes/%s' % name)
   return k8s_service(yaml, img)
 
-def python_service(name, extra_runs=[]):
+def python_service(name, run_fn=None):
   yaml = local_file('%s/deployments/%s.yaml' % (name, name))
 
   image_name = 'gcr.io/windmill-public-containers/servantes/%s' % name
@@ -28,12 +28,12 @@ def python_service(name, extra_runs=[]):
   repo = local_git_repo('.')
   img.add(repo.path('./%s/' % name), "/app")
 
-  for r in extra_runs:
-    img.run(r)
+  if run_fn:
+    run_fn(img)
 
   return k8s_service(yaml, img)
 
-def javascript_service(name, extra_runs=[]):
+def javascript_service(name, run_fn=None):
   yaml = local_file('%s/deployments/%s.yaml' % (name, name))
 
   image_name = 'gcr.io/windmill-public-containers/servantes/%s' % name
@@ -42,8 +42,8 @@ def javascript_service(name, extra_runs=[]):
   repo = local_git_repo('.')
   img.add(repo.path('./%s/' % name), "/app")
 
-  for r in extra_runs:
-    img.run(r)
+  if run_fn:
+    run_fn(img)
 
   return k8s_service(yaml, img)
 
@@ -60,13 +60,22 @@ def doggos():
   return go_service('doggos')
 
 def fortune():
-  return go_service('fortune', ['cd src/github.com/windmilleng/servantes/fortune && make proto'])
+  def runs(img):
+    img.run('cd src/github.com/windmilleng/servantes/fortune && make proto')
+
+  return go_service('fortune', runs)
 
 def hypothesizer():
-  return python_service('hypothesizer', ['cd /app && pip install -r requirements.txt'])
+  def runs(img):
+    img.run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt')
+
+  return python_service('hypothesizer', runs)
 
 def spoonerisms():
-  return javascript_service('spoonerisms', ['cd /app && yarn install'])
+  def runs(img):
+    img.run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
+
+  return javascript_service('spoonerisms', runs)
 
 def local_file(p):
   return local("cat %s" % p)
