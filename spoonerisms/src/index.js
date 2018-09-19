@@ -11,6 +11,7 @@ const spoonerisms = immutable.List([
   'Bustin Jieber',
   'Jilly Boel',
   'Boot rear',
+  'Man diller',
 ])
 
 http.createServer(function (req, res) {
