@@ -33,13 +33,16 @@ def python_service(name, run_fn=None):
 
   return k8s_service(yaml, img)
 
-def javascript_service(name, run_fn=None):
+def javascript_service(name, dir_with_code, run_fn=None):
   yaml = local_file('%s/deployments/%s.yaml' % (name, name))
 
   image_name = 'gcr.io/windmill-public-containers/servantes/%s' % name
 
   img = build_docker_image('Dockerfile.js.base', image_name, 'node /app/index.js')
   repo = local_git_repo('.')
+  img.add(repo.path('./%s/%s' % (name, dir_with_code)), '/app/')
+  img.add(repo.path('./%s/package.json' % name), '/app/index.js')
+  img.add(repo.path('./%s/yarn.lock' % name), '/app/yarn.lock')
   img.add(repo.path('./%s/' % name), "/app")
 
   if run_fn:
@@ -75,7 +78,7 @@ def spoonerisms():
   def runs(img):
     img.run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
 
-  return javascript_service('spoonerisms', runs)
+  return javascript_service('spoonerisms', 'src', runs)
 
 def local_file(p):
   return local("cat %s" % p)
