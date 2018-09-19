@@ -1,5 +1,28 @@
 # -*- mode: Python -*-
 
+"""
+This Tiltfile contains 1 composite service which depends on a number of regular services.
+Here's a quick rundown of these services and their properties:
+
+* Frontend
+  * Language: Go
+  * Other notes: presents a grid of the results of calling all of the other services
+* Vigoda
+  * Language: Go
+* Snack
+  * Language: Go
+* Doggos
+  * Language: Go
+* Fortune
+  * Language: Go
+* Hypothesizer
+  * Language: Python
+  * Other notes: does a `pip install` for package dependencies. Only reinstalls dependencies, only if the dependencies have changed.
+* Spoonerisms
+  * Language: JavaScript
+  * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
+"""
+
 def servantes():
   return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms])
 
