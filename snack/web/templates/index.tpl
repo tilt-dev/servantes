@@ -1,6 +1,6 @@
 <!doctype html>
     <head>
-        <title>Fortune</title>
+        <title>Snack</title>
         <style>
             /* CSS Variables */
             :root {
