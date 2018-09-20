@@ -14,6 +14,7 @@ spec:
       containers:
       - name: hypothesizer
         image: gcr.io/windmill-public-containers/servantes/hypothesizer
+        command: ["python", "/app/app.py"]
         ports:
         - containerPort: 5000
 ---
