@@ -118,7 +118,7 @@
           <ul class="k8s-data">
             <li>{{$service.Name}} — {{$service.Status}}</li>
             <li>
-              <span>restartCount: {{$service.HumanAge}}</span>
+              <span>restarts: {{$service.RestartCount}}</span>
               <span>•</span>
               <span>age: {{$service.HumanAge}}</span>
             </li>
