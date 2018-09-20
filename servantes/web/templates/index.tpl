@@ -70,7 +70,7 @@
     background-color: var(--white);
     padding: 0;
     position: relative;
-    min-height: 15em;
+    min-height: 18em;
     border-right: 10px solid var(--tan);
     border-bottom: 10px solid var(--tan);
     /* Make room for K8s Data */
