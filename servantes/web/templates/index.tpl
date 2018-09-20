@@ -116,10 +116,8 @@
       {{range $i, $service := .Services}}
         <li class="service-item">
           <ul class="k8s-data">
-            <li>{{$service.Name}}</li>
+            <li>{{$service.Name}} — {{$service.Status}}</li>
             <li>
-              <span>status: {{$service.Phase}}</span>
-              <span>•</span>
               <span>restartCount: {{$service.HumanAge}}</span>
               <span>•</span>
               <span>age: {{$service.HumanAge}}</span>
