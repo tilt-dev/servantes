@@ -96,7 +96,6 @@ def spoonerisms():
   img.add(repo.path('spoonerisms/src'), '/app/')
   img.add(repo.path('spoonerisms/package.json'), '/app/package.json')
   img.add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
-  img.add(repo.path('spoonerisms/'), "/app")
 
   img.run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
 
