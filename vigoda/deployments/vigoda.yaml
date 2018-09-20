@@ -14,6 +14,7 @@ spec:
       containers:
       - name: vigoda
         image: gcr.io/windmill-public-containers/servantes/vigoda
+        command: ["/go/bin/vigoda"]
         env:
         - name: TEMPLATE_DIR
           value: "/go/src/github.com/windmilleng/servantes/vigoda/web/templates"

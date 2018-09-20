@@ -17,7 +17,7 @@ Here's a quick rundown of these services and their properties:
   * Language: Go
 * Hypothesizer
   * Language: Python
-  * Other notes: does a `pip install` for package dependencies. Only reinstalls dependencies, only if the dependencies have changed.
+  * Other notes: does a `pip install` for package dependencies. Reinstalls dependencies, only if the dependencies have changed.
 * Spoonerisms
   * Language: JavaScript
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
@@ -31,7 +31,7 @@ def fe():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/servantes'
 
-  img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/servantes')
+  img = build_docker_image('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/servantes'
   repo = local_git_repo('.')
   img.add(repo.path('servantes'), path)
@@ -44,7 +44,7 @@ def vigoda():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/vigoda'
 
-  img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/vigoda')
+  img = build_docker_image('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/vigoda'
   repo = local_git_repo('.')
   img.add(repo.path('vigoda'), path)
@@ -58,7 +58,7 @@ def snack():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/snack'
 
-  img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/snack')
+  img = build_docker_image('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/snack'
   repo = local_git_repo('.')
   img.add(repo.path('snack'), path)
@@ -72,7 +72,7 @@ def doggos():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/doggos'
 
-  img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/doggos')
+  img = build_docker_image('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/doggos'
   repo = local_git_repo('.')
   img.add(repo.path('doggos'), path)
@@ -86,7 +86,7 @@ def fortune():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/fortune'
 
-  img = build_docker_image('Dockerfile.go.base', image_name, '/go/bin/fortune')
+  img = build_docker_image('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/fortune'
   repo = local_git_repo('.')
   img.add(repo.path('fortune'), path)
@@ -101,7 +101,7 @@ def hypothesizer():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/hypothesizer'
 
-  img = build_docker_image('Dockerfile.py.base', image_name, 'python /app/app.py')
+  img = build_docker_image('Dockerfile.py.base', image_name)
   repo = local_git_repo('.')
   img.add(repo.path('hypothesizer'), "/app")
 
