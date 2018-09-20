@@ -14,7 +14,8 @@
       <div style="position:relative;box-shadow: inset 0 0 4em #00bfff;padding:2em;">
         <div style="position:absolute; font-size:0.8em; bottom:0.5em; right:0.5em; z-index:1; text-align:right;">
           service: {{$service.Name}}<br>
-          phase: {{$service.Phase}}<br>
+          status: {{$service.Status}}<br>
+          restartCount: {{$service.RestartCount}}<br>
           age: {{$service.HumanAge}}
         </div>
         <iframe frameborder="0"
