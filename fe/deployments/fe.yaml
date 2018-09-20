@@ -1,32 +1,32 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: servantes
+  name: fe
   labels:
-    app: servantes
+    app: fe
 spec:
   template:
     metadata:
       labels:
-        app: servantes
+        app: fe
         tier: web
     spec:
       containers:
-      - name: servantes
-        image: gcr.io/windmill-public-containers/servantes/servantes
-        command: ["/go/bin/servantes"]
+      - name: fe
+        image: gcr.io/windmill-public-containers/servantes/fe
+        command: ["/go/bin/fe"]
         env:
         - name: TEMPLATE_DIR
-          value: "/go/src/github.com/windmilleng/servantes/servantes/web/templates"
+          value: "/go/src/github.com/windmilleng/servantes/fe/web/templates"
         ports:
         - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: servantes
+  name: fe
   labels:
-    app: servantes
+    app: fe
 spec:
   type: LoadBalancer
   ports:
@@ -34,7 +34,7 @@ spec:
       targetPort: 8080
       protocol: TCP
   selector:
-    app: servantes
+    app: fe
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1

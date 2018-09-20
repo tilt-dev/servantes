@@ -27,16 +27,16 @@ def servantes():
   return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms])
 
 def fe():
-  yaml = read_file('servantes/deployments/servantes.yaml')
+  yaml = read_file('fe/deployments/fe.yaml')
 
-  image_name = 'gcr.io/windmill-public-containers/servantes/servantes'
+  image_name = 'gcr.io/windmill-public-containers/servantes/fe'
 
   img = build_docker_image('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/servantes'
+  path = '/go/src/github.com/windmilleng/servantes/fe'
   repo = local_git_repo('.')
-  img.add(repo.path('servantes'), path)
+  img.add(repo.path('fe'), path)
 
-  img.run('go install github.com/windmilleng/servantes/servantes')
+  img.run('go install github.com/windmilleng/servantes/fe')
   return k8s_service(yaml, img)
 
 def vigoda():
