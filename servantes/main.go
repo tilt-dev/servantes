@@ -89,6 +89,67 @@ func createK8sClient() (*kubernetes.Clientset, error) {
 	return client, nil
 }
 
+// copied from https://github.com/kubernetes/kubernetes/blob/aedeccda9562b9effe026bb02c8d3c539fc7bb77/pkg/kubectl/resource_printer.go#L692-L764
+// to match the status column of `kubectl get pods`
+func getStatus(pod v1.Pod) (string, int) {
+	restarts := 0
+
+	reason := string(pod.Status.Phase)
+	if pod.Status.Reason != "" {
+		reason = pod.Status.Reason
+	}
+
+	initializing := false
+	for i := range pod.Status.InitContainerStatuses {
+		container := pod.Status.InitContainerStatuses[i]
+		restarts += int(container.RestartCount)
+		switch {
+		case container.State.Terminated != nil && container.State.Terminated.ExitCode == 0:
+			continue
+		case container.State.Terminated != nil:
+			// initialization is failed
+			if len(container.State.Terminated.Reason) == 0 {
+				if container.State.Terminated.Signal != 0 {
+					reason = fmt.Sprintf("Init:Signal:%d", container.State.Terminated.Signal)
+				} else {
+					reason = fmt.Sprintf("Init:ExitCode:%d", container.State.Terminated.ExitCode)
+				}
+			} else {
+				reason = "Init:" + container.State.Terminated.Reason
+			}
+			initializing = true
+		case container.State.Waiting != nil && len(container.State.Waiting.Reason) > 0 && container.State.Waiting.Reason != "PodInitializing":
+			reason = "Init:" + container.State.Waiting.Reason
+			initializing = true
+		default:
+			reason = fmt.Sprintf("Init:%d/%d", i, len(pod.Spec.InitContainers))
+			initializing = true
+		}
+		break
+	}
+	if !initializing {
+		restarts = 0
+		for i := len(pod.Status.ContainerStatuses) - 1; i >= 0; i-- {
+			container := pod.Status.ContainerStatuses[i]
+
+			restarts += int(container.RestartCount)
+			if container.State.Waiting != nil && container.State.Waiting.Reason != "" {
+				reason = container.State.Waiting.Reason
+			} else if container.State.Terminated != nil && container.State.Terminated.Reason != "" {
+				reason = container.State.Terminated.Reason
+			} else if container.State.Terminated != nil && container.State.Terminated.Reason == "" {
+				if container.State.Terminated.Signal != 0 {
+					reason = fmt.Sprintf("Signal:%d", container.State.Terminated.Signal)
+				} else {
+					reason = fmt.Sprintf("ExitCode:%d", container.State.Terminated.ExitCode)
+				}
+			}
+		}
+	}
+
+	return reason, restarts
+}
+
 // List all services in our hard-coded list by querying the k8s api.
 func listServicesFromK8sAPI() (map[string]serviceData, error) {
 	serviceMap := make(map[string]serviceData, 0)
@@ -103,7 +164,8 @@ func listServicesFromK8sAPI() (map[string]serviceData, error) {
 
 	for _, pod := range podList.Items {
 		app := pod.ObjectMeta.Labels["app"]
-		phase := pod.Status.Phase
+
+		status, restartCount := getStatus(pod)
 		bestStartTime := bestStartTime(pod)
 
 		_, isServantes := ProxyMap[app]
@@ -117,9 +179,10 @@ func listServicesFromK8sAPI() (map[string]serviceData, error) {
 		}
 
 		data := serviceData{
-			Name:      app,
-			Phase:     string(phase),
-			StartTime: bestStartTime,
+			Name:         app,
+			Status:       status,
+			RestartCount: restartCount,
+			StartTime:    bestStartTime,
 		}
 		serviceMap[app] = data
 	}
@@ -161,8 +224,8 @@ func listServices() []serviceData {
 			result = append(result, data)
 		} else {
 			result = append(result, serviceData{
-				Name:  service,
-				Phase: "Unknown",
+				Name:   service,
+				Status: "Unknown",
 			})
 		}
 	}
@@ -209,9 +272,10 @@ type templateData struct {
 }
 
 type serviceData struct {
-	Name      string
-	Phase     string
-	StartTime time.Time
+	Name         string
+	Status       string
+	RestartCount int
+	StartTime    time.Time
 }
 
 func (d serviceData) HumanAge() string {
