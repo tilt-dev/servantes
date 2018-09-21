@@ -31,12 +31,14 @@ def fe():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/fe'
 
-  img = start_fast_build('Dockerfile.go.base', image_name)
+  start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/fe'
   repo = local_git_repo('.')
-  img.add(repo.path('fe'), path)
+  add(repo.path('fe'), path)
 
-  img.run('go install github.com/windmilleng/servantes/fe')
+  run('go install github.com/windmilleng/servantes/fe')
+  img = stop_build()
+
   return k8s_service(yaml, img)
 
 def vigoda():
@@ -44,12 +46,13 @@ def vigoda():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/vigoda'
 
-  img = start_fast_build('Dockerfile.go.base', image_name)
+  start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/vigoda'
   repo = local_git_repo('.')
-  img.add(repo.path('vigoda'), path)
+  add(repo.path('vigoda'), path)
 
-  img.run('go install github.com/windmilleng/servantes/vigoda')
+  run('go install github.com/windmilleng/servantes/vigoda')
+  img = stop_build()
 
   return k8s_service(yaml, img)
 
@@ -58,12 +61,13 @@ def snack():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/snack'
 
-  img = start_fast_build('Dockerfile.go.base', image_name)
+  start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/snack'
   repo = local_git_repo('.')
-  img.add(repo.path('snack'), path)
+  add(repo.path('snack'), path)
 
-  img.run('go install github.com/windmilleng/servantes/snack')
+  run('go install github.com/windmilleng/servantes/snack')
+  img = stop_build()
 
   return k8s_service(yaml, img)
 
@@ -72,12 +76,13 @@ def doggos():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/doggos'
 
-  img = start_fast_build('Dockerfile.go.base', image_name)
+  start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/doggos'
   repo = local_git_repo('.')
-  img.add(repo.path('doggos'), path)
+  add(repo.path('doggos'), path)
 
-  img.run('go install github.com/windmilleng/servantes/doggos')
+  run('go install github.com/windmilleng/servantes/doggos')
+  img = stop_build()
 
   return k8s_service(yaml, img)
 
@@ -89,10 +94,11 @@ def fortune():
   img = start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/fortune'
   repo = local_git_repo('.')
-  img.add(repo.path('fortune'), path)
+  add(repo.path('fortune'), path)
 
-  img.run('cd src/github.com/windmilleng/servantes/fortune && make proto')
-  img.run('go install github.com/windmilleng/servantes/fortune')
+  run('cd src/github.com/windmilleng/servantes/fortune && make proto')
+  run('go install github.com/windmilleng/servantes/fortune')
+  img = stop_build()
 
   return k8s_service(yaml, img)
 
@@ -101,11 +107,12 @@ def hypothesizer():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/hypothesizer'
 
-  img = start_fast_build('Dockerfile.py.base', image_name)
+  start_fast_build('Dockerfile.py.base', image_name)
   repo = local_git_repo('.')
-  img.add(repo.path('hypothesizer'), "/app")
+  add(repo.path('hypothesizer'), "/app")
 
-  img.run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt')
+  run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt')
+  img = stop_build()
 
   return k8s_service(yaml, img)
 
@@ -114,12 +121,13 @@ def spoonerisms():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/spoonerisms'
 
-  img = start_fast_build('Dockerfile.js.base', image_name, 'node /app/index.js')
+  start_fast_build('Dockerfile.js.base', image_name, 'node /app/index.js')
   repo = local_git_repo('.')
-  img.add(repo.path('spoonerisms/src'), '/app')
-  img.add(repo.path('spoonerisms/package.json'), '/app/package.json')
-  img.add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
+  add(repo.path('spoonerisms/src'), '/app')
+  add(repo.path('spoonerisms/package.json'), '/app/package.json')
+  add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
 
-  img.run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
+  run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
+  img = stop_build()
 
   return k8s_service(yaml, img)
