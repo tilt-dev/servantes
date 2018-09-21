@@ -33,7 +33,7 @@ var Client *kubernetes.Clientset
 
 func main() {
 	// We've seen problems where, when keep-alive is enabled,
-	// Servantes keeps talking to old pods even after the endpoints
+	//  keeps talking to old pods even after the endpoints
 	// have been updated. We don't totally understand why this happens (yet!),
 	// but for now we disable keep-alive to make the demo nicer.
 	//
@@ -235,7 +235,7 @@ func listServices() []serviceData {
 func templatePath(f string) string {
 	dir := os.Getenv("TEMPLATE_DIR")
 	if dir == "" {
-		dir = "servantes/web/templates"
+		dir = "fe/web/templates"
 	}
 	return filepath.Join(dir, f)
 }

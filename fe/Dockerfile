@@ -10,6 +10,6 @@ RUN wget https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}
 
 RUN go get github.com/golang/protobuf/protoc-gen-go
 
-ADD . /go/src/github.com/windmilleng/servantes/servantes
-RUN go install github.com/windmilleng/servantes/servantes
-ENTRYPOINT /go/bin/servantes
+ADD . /go/src/github.com/windmilleng/servantes/fe
+RUN go install github.com/windmilleng/servantes/fe
+ENTRYPOINT /go/bin/fe
