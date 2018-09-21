@@ -31,7 +31,7 @@ def fe():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/fe'
 
-  img = build_docker_image('Dockerfile.go.base', image_name)
+  img = start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/fe'
   repo = local_git_repo('.')
   img.add(repo.path('fe'), path)
@@ -44,7 +44,7 @@ def vigoda():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/vigoda'
 
-  img = build_docker_image('Dockerfile.go.base', image_name)
+  img = start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/vigoda'
   repo = local_git_repo('.')
   img.add(repo.path('vigoda'), path)
@@ -58,7 +58,7 @@ def snack():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/snack'
 
-  img = build_docker_image('Dockerfile.go.base', image_name)
+  img = start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/snack'
   repo = local_git_repo('.')
   img.add(repo.path('snack'), path)
@@ -72,7 +72,7 @@ def doggos():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/doggos'
 
-  img = build_docker_image('Dockerfile.go.base', image_name)
+  img = start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/doggos'
   repo = local_git_repo('.')
   img.add(repo.path('doggos'), path)
@@ -86,7 +86,7 @@ def fortune():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/fortune'
 
-  img = build_docker_image('Dockerfile.go.base', image_name)
+  img = start_fast_build('Dockerfile.go.base', image_name)
   path = '/go/src/github.com/windmilleng/servantes/fortune'
   repo = local_git_repo('.')
   img.add(repo.path('fortune'), path)
@@ -101,7 +101,7 @@ def hypothesizer():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/hypothesizer'
 
-  img = build_docker_image('Dockerfile.py.base', image_name)
+  img = start_fast_build('Dockerfile.py.base', image_name)
   repo = local_git_repo('.')
   img.add(repo.path('hypothesizer'), "/app")
 
@@ -114,7 +114,7 @@ def spoonerisms():
 
   image_name = 'gcr.io/windmill-public-containers/servantes/spoonerisms'
 
-  img = build_docker_image('Dockerfile.js.base', image_name, 'node /app/index.js')
+  img = start_fast_build('Dockerfile.js.base', image_name, 'node /app/index.js')
   repo = local_git_repo('.')
   img.add(repo.path('spoonerisms/src'), '/app')
   img.add(repo.path('spoonerisms/package.json'), '/app/package.json')
