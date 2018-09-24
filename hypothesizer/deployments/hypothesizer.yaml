@@ -1,15 +1,17 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: hypothesizer
+  name: OWNER-hypothesizer
   labels:
     app: hypothesizer
+    owner: OWNER
 spec:
   template:
     metadata:
       labels:
         app: hypothesizer
         tier: web
+        owner: OWNER
     spec:
       containers:
       - name: hypothesizer
@@ -21,9 +23,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hypothesizer
+  name: OWNER-hypothesizer
   labels:
     app: hypothesizer
+    owner: OWNER
 spec:
   ports:
     - port: 80
@@ -31,3 +34,4 @@ spec:
       protocol: TCP
   selector:
     app: hypothesizer
+    owner: OWNER

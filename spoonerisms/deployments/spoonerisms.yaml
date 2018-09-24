@@ -1,15 +1,17 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: spoonerisms
+  name: OWNER-spoonerisms
   labels:
     app: spoonerisms
+    owner: OWNER
 spec:
   template:
     metadata:
       labels:
         app: spoonerisms
         tier: web
+        owner: OWNER
     spec:
       containers:
       - name: spoonerisms
@@ -21,9 +23,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: spoonerisms
+  name: OWNER-spoonerisms
   labels:
     app: spoonerisms
+    owner: OWNER
 spec:
   ports:
     - port: 80
@@ -31,3 +34,4 @@ spec:
       protocol: TCP
   selector:
     app: spoonerisms
+    owner: OWNER

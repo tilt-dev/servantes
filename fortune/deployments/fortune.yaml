@@ -1,15 +1,17 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: fortune
+  name: OWNER-fortune
   labels:
     app: fortune
+    owner: OWNER
 spec:
   template:
     metadata:
       labels:
         app: fortune
         tier: web
+        owner: OWNER
     spec:
       containers:
       - name: fortune
@@ -24,9 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fortune
+  name: OWNER-fortune
   labels:
     app: fortune
+    owner: OWNER
 spec:
   ports:
     - port: 80
@@ -34,3 +37,4 @@ spec:
       protocol: TCP
   selector:
     app: fortune
+    owner: OWNER

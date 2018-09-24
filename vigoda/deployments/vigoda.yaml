@@ -1,15 +1,17 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: vigoda
+  name: OWNER-vigoda
   labels:
     app: vigoda
+    owner: OWNER
 spec:
   template:
     metadata:
       labels:
         app: vigoda
         tier: web
+        owner: OWNER
     spec:
       containers:
       - name: vigoda
@@ -24,9 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vigoda
+  name: OWNER-vigoda
   labels:
     app: vigoda
+    owner: OWNER
 spec:
   ports:
     - port: 80
@@ -34,3 +37,4 @@ spec:
       protocol: TCP
   selector:
     app: vigoda
+    owner: OWNER
