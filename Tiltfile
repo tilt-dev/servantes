@@ -26,12 +26,21 @@ Here's a quick rundown of these services and their properties:
 def servantes():
   return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms])
 
+def get_username():
+  return local('whoami').rstrip('\n')
+
+def kustomized_yaml(dir):
+  have_kustomize = local('kustomize > /dev/null || echo not found')
+  if len(have_kustomize) > 0:
+    print("servantes requires kustomize. Install via: go get sigs.k8s.io/kustomize")
+  return local('kustomize build ' + dir + ' | m4 -DOWNER="' + get_username() + '"')
+
 def fe():
-  yaml = read_file('fe/deployments/fe.yaml')
+  yaml = kustomized_yaml('fe/deployments')
 
   image_name = 'gcr.io/windmill-public-containers/servantes/fe'
 
-  start_fast_build('Dockerfile.go.base', image_name)
+  start_fast_build('Dockerfile.go.base', image_name, '/go/bin/fe --owner ' + get_username())
   path = '/go/src/github.com/windmilleng/servantes/fe'
   repo = local_git_repo('.')
   add(repo.path('fe'), path)
@@ -42,7 +51,7 @@ def fe():
   return k8s_service(yaml, img)
 
 def vigoda():
-  yaml = read_file('vigoda/deployments/vigoda.yaml')
+  yaml = kustomized_yaml('vigoda/deployments')
 
   image_name = 'gcr.io/windmill-public-containers/servantes/vigoda'
 
@@ -57,7 +66,7 @@ def vigoda():
   return k8s_service(yaml, img)
 
 def snack():
-  yaml = read_file('snack/deployments/snack.yaml')
+  yaml = kustomized_yaml('snack/deployments')
 
   image_name = 'gcr.io/windmill-public-containers/servantes/snack'
 
@@ -72,7 +81,7 @@ def snack():
   return k8s_service(yaml, img)
 
 def doggos():
-  yaml = read_file('doggos/deployments/doggos.yaml')
+  yaml = kustomized_yaml('doggos/deployments')
 
   image_name = 'gcr.io/windmill-public-containers/servantes/doggos'
 
@@ -87,7 +96,7 @@ def doggos():
   return k8s_service(yaml, img)
 
 def fortune():
-  yaml = read_file('fortune/deployments/fortune.yaml')
+  yaml = kustomized_yaml('fortune/deployments')
 
   image_name = 'gcr.io/windmill-public-containers/servantes/fortune'
 
@@ -103,7 +112,7 @@ def fortune():
   return k8s_service(yaml, img)
 
 def hypothesizer():
-  yaml = read_file('hypothesizer/deployments/hypothesizer.yaml')
+  yaml = kustomized_yaml('hypothesizer/deployments')
 
   image_name = 'gcr.io/windmill-public-containers/servantes/hypothesizer'
 
@@ -117,7 +126,7 @@ def hypothesizer():
   return k8s_service(yaml, img)
 
 def spoonerisms():
-  yaml = read_file('spoonerisms/deployments/spoonerisms.yaml')
+  yaml = kustomized_yaml('spoonerisms/deployments')
 
   image_name = 'gcr.io/windmill-public-containers/servantes/spoonerisms'
 

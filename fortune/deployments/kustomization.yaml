@@ -1,0 +1,7 @@
+commonLabels:
+  owner: OWNER
+
+namePrefix: OWNER-
+
+resources:
+- fortune.yaml
