@@ -1,20 +1,21 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: fe
+  name: OWNER-fe
   labels:
     app: fe
+    owner: OWNER
 spec:
   template:
     metadata:
       labels:
         app: fe
         tier: web
+        owner: OWNER
     spec:
       containers:
       - name: fe
         image: gcr.io/windmill-public-containers/servantes/fe
-        command: ["/go/bin/fe"]
         env:
         - name: TEMPLATE_DIR
           value: "/go/src/github.com/windmilleng/servantes/fe/web/templates"
@@ -24,9 +25,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fe
+  name: OWNER-fe
   labels:
     app: fe
+    owner: OWNER
 spec:
   type: LoadBalancer
   ports:
@@ -35,6 +37,7 @@ spec:
       protocol: TCP
   selector:
     app: fe
+    owner: OWNER
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1

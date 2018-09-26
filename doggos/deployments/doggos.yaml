@@ -1,15 +1,17 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: doggos
+  name: OWNER-doggos
   labels:
     app: doggos
+    owner: OWNER
 spec:
   template:
     metadata:
       labels:
         app: doggos
         tier: web
+        owner: OWNER
     spec:
       containers:
       - name: doggos
@@ -24,9 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: doggos
+  name: OWNER-doggos
   labels:
     app: doggos
+    owner: OWNER
 spec:
   ports:
     - port: 80
@@ -34,3 +37,4 @@ spec:
       protocol: TCP
   selector:
     app: doggos
+    owner: OWNER

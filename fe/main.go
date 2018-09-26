@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -31,7 +32,11 @@ var Services = []string{
 var ProxyMap = make(map[string]*httputil.ReverseProxy, 0)
 var Client *kubernetes.Clientset
 
+var serviceOwner = flag.String("owner", "", "If specified, servantes will only use services that have an `owner` label with the given value")
+
 func main() {
+	flag.Parse()
+
 	// We've seen problems where, when keep-alive is enabled,
 	//  keeps talking to old pods even after the endpoints
 	// have been updated. We don't totally understand why this happens (yet!),
@@ -48,31 +53,33 @@ func main() {
 	Client = client
 
 	for _, s := range Services {
-		ProxyMap[s] = newProxy(s)
+		ProxyMap[s] = newProxy(s, *serviceOwner)
 	}
 
 	r := mux.NewRouter()
 	r.PathPrefix("/s/{service}").Handler(http.HandlerFunc(handleService))
-	r.HandleFunc("/", handleIndex)
+	r.HandleFunc("/", handleIndex(*serviceOwner))
 	http.Handle("/", r)
 
 	http.ListenAndServe(":8080", nil)
 }
 
-func handleIndex(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles(templatePath("index.tpl"))
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error parsing template: %v\n", err),
-			http.StatusInternalServerError)
-		return
-	}
+func handleIndex(serviceOwner string) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		t, err := template.ParseFiles(templatePath("index.tpl"))
+		if err != nil {
+			http.Error(w, fmt.Sprintf("error parsing template: %v\n", err),
+				http.StatusInternalServerError)
+			return
+		}
 
-	services := listServices()
-	err = t.Execute(w, templateData{Services: services})
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error executing template: %v\n", err),
-			http.StatusInternalServerError)
-		return
+		services := listServices(serviceOwner)
+		err = t.Execute(w, templateData{Services: services})
+		if err != nil {
+			http.Error(w, fmt.Sprintf("error executing template: %v\n", err),
+				http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
@@ -151,7 +158,7 @@ func getStatus(pod v1.Pod) (string, int) {
 }
 
 // List all services in our hard-coded list by querying the k8s api.
-func listServicesFromK8sAPI() (map[string]serviceData, error) {
+func listServicesFromK8sAPI(serviceOwner string) (map[string]serviceData, error) {
 	serviceMap := make(map[string]serviceData, 0)
 	if Client == nil {
 		return serviceMap, nil
@@ -163,6 +170,10 @@ func listServicesFromK8sAPI() (map[string]serviceData, error) {
 	}
 
 	for _, pod := range podList.Items {
+		if len(serviceOwner) > 0 && pod.ObjectMeta.Labels["owner"] != serviceOwner  {
+			continue
+		}
+
 		app := pod.ObjectMeta.Labels["app"]
 
 		status, restartCount := getStatus(pod)
@@ -184,6 +195,7 @@ func listServicesFromK8sAPI() (map[string]serviceData, error) {
 			RestartCount: restartCount,
 			StartTime:    bestStartTime,
 		}
+
 		serviceMap[app] = data
 	}
 
@@ -210,8 +222,8 @@ func bestStartTime(pod v1.Pod) time.Time {
 
 // Format all services as serviceData objects.
 // Fail back to the hard-coded list if we don't have access to the k8s api.
-func listServices() []serviceData {
-	serviceMap, err := listServicesFromK8sAPI()
+func listServices(serviceOwner string) []serviceData {
+	serviceMap, err := listServicesFromK8sAPI(serviceOwner)
 	if err != nil {
 		log.Printf("Error fetching pods: %v\n", err)
 		serviceMap = make(map[string]serviceData, 0)
@@ -253,16 +265,18 @@ func handleService(w http.ResponseWriter, r *http.Request) {
 	proxy.ServeHTTP(w, r)
 }
 
-func newProxy(service string) *httputil.ReverseProxy {
+func newProxy(service string, serviceOwner string) *httputil.ReverseProxy {
 	prefix := fmt.Sprintf("/s/%s", service)
 	director := func(req *http.Request) {
 		req.URL.Scheme = "http"
 		req.URL.Host = service
+		if len(serviceOwner) > 0 {
+			req.URL.Host = fmt.Sprintf("%s-%s", serviceOwner, service)
+		}
 		req.URL.Path = strings.Replace(req.URL.Path, prefix, "", 1)
 		if req.URL.Path == "" {
 			req.URL.Path = "/"
 		}
-
 	}
 	return &httputil.ReverseProxy{Director: director}
 }

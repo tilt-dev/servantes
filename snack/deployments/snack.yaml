@@ -1,15 +1,17 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: snack
+  name: OWNER-snack
   labels:
     app: snack
+    owner: OWNER
 spec:
   template:
     metadata:
       labels:
         app: snack
         tier: web
+        owner: OWNER
     spec:
       containers:
       - name: snack
@@ -24,9 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: snack
+  name: OWNER-snack
   labels:
     app: snack
+    owner: OWNER
 spec:
   ports:
     - port: 80
@@ -34,3 +37,4 @@ spec:
       protocol: TCP
   selector:
     app: snack
+    owner: OWNER
