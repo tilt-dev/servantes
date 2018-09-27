@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: OWNER-emoji
+  labels:
+    app: emoji
+    owner: OWNER
+spec:
+  template:
+    metadata:
+      labels:
+        app: emoji
+        tier: web
+        owner: OWNER
+    spec:
+      containers:
+      - name: emoji
+        image: gcr.io/windmill-public-containers/servantes/emoji
+        command: ["/go/bin/emoji"]
+        env:
+        - name: TEMPLATE_DIR
+          value: "/go/src/github.com/windmilleng/servantes/emoji/web/templates"
+        ports:
+        - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: OWNER-emoji
+  labels:
+    app: emoji
+    owner: OWNER
+spec:
+  ports:
+    - port: 80
+      targetPort: 8081
+      protocol: TCP
+  selector:
+    app: emoji
+    owner: OWNER
