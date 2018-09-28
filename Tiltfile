@@ -30,7 +30,7 @@ def get_username():
   return local('whoami').rstrip('\n')
 
 def m4_yaml(file):
-  return local('m4 "' + file + '" -DOWNER="' + get_username() + '"')
+  return local('m4 -DOWNER=%s %s' % (repr(get_username()), repr(file)))
 
 def fe():
   yaml = m4_yaml('fe/deployments/fe.yaml')
@@ -152,4 +152,3 @@ def emoji():
   img = stop_build()
 
   return k8s_service(yaml, img)
-
