@@ -19,6 +19,9 @@ spec:
         command: ["python", "/app/app.py"]
         ports:
         - containerPort: 5000
+        resources:
+          requests:
+            cpu: "10m"
 ---
 apiVersion: v1
 kind: Service

@@ -21,6 +21,9 @@ spec:
           value: "/go/src/github.com/windmilleng/servantes/fe/web/templates"
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            cpu: "10m"
 ---
 apiVersion: v1
 kind: Service
