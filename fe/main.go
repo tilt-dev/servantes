@@ -171,7 +171,7 @@ func listServicesFromK8sAPI(serviceOwner string) (map[string]serviceData, error)
 	}
 
 	for _, pod := range podList.Items {
-		if len(serviceOwner) > 0 && pod.ObjectMeta.Labels["owner"] != serviceOwner  {
+		if len(serviceOwner) > 0 && pod.ObjectMeta.Labels["owner"] != serviceOwner {
 			continue
 		}
 
@@ -206,8 +206,12 @@ func listServicesFromK8sAPI(serviceOwner string) (map[string]serviceData, error)
 // We want to get the time that best reflects the current age
 // of the container running the service.
 func bestStartTime(pod v1.Pod) time.Time {
-	podStartTime := pod.Status.StartTime.Time
-	bestStartTime := podStartTime
+	var bestStartTime time.Time
+
+	podStartTime := pod.Status.StartTime
+	if podStartTime != nil {
+		bestStartTime = podStartTime.Time
+	}
 
 	for _, cStatus := range pod.Status.ContainerStatuses {
 		state := cStatus.State
