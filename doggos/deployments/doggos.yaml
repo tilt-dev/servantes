@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: OWNER-doggos
@@ -6,6 +6,10 @@ metadata:
     app: doggos
     owner: OWNER
 spec:
+  selector:
+    matchLabels:
+      app: doggos
+      owner: OWNER
   template:
     metadata:
       labels:

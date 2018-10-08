@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: OWNER-snack
@@ -6,6 +6,10 @@ metadata:
     app: snack
     owner: OWNER
 spec:
+  selector:
+    matchLabels:
+      app: snack
+      owner: OWNER
   template:
     metadata:
       labels:
