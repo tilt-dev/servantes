@@ -11,10 +11,13 @@ Here's a quick rundown of these services and their properties:
   * Language: Go
 * Snack
   * Language: Go
+  * Other notes: Uses static_build
 * Doggos
   * Language: Go
+  * Other notes: Has a JS component
 * Fortune
   * Language: Go
+  * Other notes: Uses protobufs
 * Hypothesizer
   * Language: Python
   * Other notes: does a `pip install` for package dependencies. Reinstalls dependencies, only if the dependencies have changed.
@@ -64,17 +67,8 @@ def vigoda():
 
 def snack():
   yaml = m4_yaml('snack/deployments/snack.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/snack'
-
-  start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/snack'
-  repo = local_git_repo('.')
-  add(repo.path('snack'), path)
-
-  run('go install github.com/windmilleng/servantes/snack')
-  img = stop_build()
-
+  img = static_build('snack/Dockerfile',
+                     'gcr.io/windmill-public-containers/servantes/snack')
   return k8s_service(yaml, img)
 
 def doggos():
