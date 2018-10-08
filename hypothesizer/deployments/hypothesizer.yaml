@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: OWNER-hypothesizer
@@ -6,6 +6,10 @@ metadata:
     app: hypothesizer
     owner: OWNER
 spec:
+  selector:
+    matchLabels:
+      app: hypothesizer
+      owner: OWNER
   template:
     metadata:
       labels:
