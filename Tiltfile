@@ -33,6 +33,7 @@ def get_username():
   return local('whoami').rstrip('\n')
 
 def m4_yaml(file):
+  read_file(file)
   return local('m4 -DOWNER=%s %s' % (repr(get_username()), repr(file)))
 
 def fe():
