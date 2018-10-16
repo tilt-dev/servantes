@@ -27,7 +27,7 @@ Here's a quick rundown of these services and their properties:
 """
 
 def servantes():
-  return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms, emoji])
+  return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms, emoji, words])
 
 def get_username():
   return local('whoami').rstrip('\n')
@@ -144,6 +144,20 @@ def emoji():
   add(repo.path('emoji'), path)
 
   run('go install github.com/windmilleng/servantes/emoji')
+  img = stop_build()
+
+  return k8s_service(yaml, img)
+
+def words():
+  yaml = m4_yaml('words/deployments/words.yaml')
+
+  image_name = 'gcr.io/windmill-public-containers/servantes/words'
+
+  start_fast_build('Dockerfile.py.base', image_name)
+  repo = local_git_repo('.')
+  add(repo.path('words'), "/app")
+
+  run('cd /app && pip install -r requirements.txt', trigger='words/requirements.txt')
   img = stop_build()
 
   return k8s_service(yaml, img)

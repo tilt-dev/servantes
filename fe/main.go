@@ -28,6 +28,7 @@ var Services = []string{
 	"hypothesizer",
 	"spoonerisms",
 	"emoji",
+	"words",
 }
 
 var ProxyMap = make(map[string]*httputil.ReverseProxy, 0)
