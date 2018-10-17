@@ -19,6 +19,7 @@ api/*/*.pb.go
 
 # Idea temp files
 .idea/
+*___jb*
 
 # vim temp files
 .*.swp
