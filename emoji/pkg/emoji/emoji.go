@@ -12,7 +12,7 @@ import (
 
 type Range struct {
 	start int
-	end int
+	end   int
 }
 
 func (r Range) Length() int {
@@ -20,7 +20,7 @@ func (r Range) Length() int {
 }
 
 type EmojiDef struct {
-	ranges []Range
+	ranges     []Range
 	emojiCount int
 }
 
@@ -56,8 +56,6 @@ func parseDefLine(s string) (*Range, error) {
 					return nil, errors.New(fmt.Sprintf("failed parsing emoji '%s' in line '%s'", n, s))
 				}
 			}
-
-			fmt.Printf("parsed '%s' into range(%s,%s)\n", s, strconv.FormatInt(int64(start), 16), strconv.FormatInt(int64(end), 16))
 
 			return &Range{int(start), int(end)}, nil
 		} else {
