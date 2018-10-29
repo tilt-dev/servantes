@@ -6,10 +6,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -20,17 +18,23 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-var Services = []string{
-	"fortune",
-	"vigoda",
-	"snack",
-	"doggos",
-	"hypothesizer",
-	"spoonerisms",
-	"emoji",
+type ServiceSpec struct {
+	Name string
+	Port int
 }
 
-var ProxyMap = make(map[string]*httputil.ReverseProxy, 0)
+var ServiceSpecs = []ServiceSpec{
+	{"fortune", 9004},
+	{"vigoda", 9001},
+	{"snack", 9002},
+	{"doggos", 9003},
+	{"hypothesizer", 9005},
+	{"spoonerisms", 9006},
+	{"emoji", 9007},
+}
+
+var ServiceSpecMap = make(map[string]ServiceSpec, len(ServiceSpecs))
+
 var Client *kubernetes.Clientset
 
 var serviceOwner = flag.String("owner", "", "If specified, servantes will only use services that have an `owner` label with the given value")
@@ -38,27 +42,17 @@ var serviceOwner = flag.String("owner", "", "If specified, servantes will only u
 func main() {
 	flag.Parse()
 
-	// We've seen problems where, when keep-alive is enabled,
-	//  keeps talking to old pods even after the endpoints
-	// have been updated. We don't totally understand why this happens (yet!),
-	// but for now we disable keep-alive to make the demo nicer.
-	//
-	// The long-term strategy is to always update containers in-place,
-	// so that there are no old pods to talk to.
-	http.DefaultTransport.(*http.Transport).DisableKeepAlives = true
-
 	client, err := createK8sClient()
 	if err != nil {
 		log.Printf("Error initializing k8s client: %v\n", err)
 	}
 	Client = client
 
-	for _, s := range Services {
-		ProxyMap[s] = newProxy(s, *serviceOwner)
+	for _, s := range ServiceSpecs {
+		ServiceSpecMap[s.Name] = s
 	}
 
 	r := mux.NewRouter()
-	r.PathPrefix("/s/{service}").Handler(http.HandlerFunc(handleService))
 	r.HandleFunc("/", handleIndex(*serviceOwner))
 	http.Handle("/", r)
 
@@ -176,14 +170,13 @@ func listServicesFromK8sAPI(serviceOwner string) (map[string]serviceData, error)
 		}
 
 		app := pod.ObjectMeta.Labels["app"]
-
-		status, restartCount := getStatus(pod)
-		bestStartTime := bestStartTime(pod)
-
-		_, isServantes := ProxyMap[app]
+		spec, isServantes := ServiceSpecMap[app]
 		if !isServantes {
 			continue
 		}
+
+		status, restartCount := getStatus(pod)
+		bestStartTime := bestStartTime(pod)
 
 		existingService := serviceMap[app]
 		if existingService.StartTime.After(bestStartTime) {
@@ -191,7 +184,8 @@ func listServicesFromK8sAPI(serviceOwner string) (map[string]serviceData, error)
 		}
 
 		data := serviceData{
-			Name:         app,
+			Name:         spec.Name,
+			Port:         spec.Port,
 			Status:       status,
 			RestartCount: restartCount,
 			StartTime:    bestStartTime,
@@ -235,13 +229,13 @@ func listServices(serviceOwner string) []serviceData {
 	}
 
 	result := make([]serviceData, 0)
-	for _, service := range Services {
-		data, found := serviceMap[service]
+	for _, service := range ServiceSpecs {
+		data, found := serviceMap[service.Name]
 		if found {
 			result = append(result, data)
 		} else {
 			result = append(result, serviceData{
-				Name:   service,
+				Name:   service.Name,
 				Status: "Unknown",
 			})
 		}
@@ -257,41 +251,13 @@ func templatePath(f string) string {
 	return filepath.Join(dir, f)
 }
 
-func handleService(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	service := vars["service"]
-	proxy, isValid := ProxyMap[service]
-	if !isValid {
-		http.Error(w, fmt.Sprintf("Service %q not found\nAvailable services: %v\n", service, Services),
-			http.StatusNotFound)
-		return
-	}
-
-	proxy.ServeHTTP(w, r)
-}
-
-func newProxy(service string, serviceOwner string) *httputil.ReverseProxy {
-	prefix := fmt.Sprintf("/s/%s", service)
-	director := func(req *http.Request) {
-		req.URL.Scheme = "http"
-		req.URL.Host = service
-		if len(serviceOwner) > 0 {
-			req.URL.Host = fmt.Sprintf("%s-%s", serviceOwner, service)
-		}
-		req.URL.Path = strings.Replace(req.URL.Path, prefix, "", 1)
-		if req.URL.Path == "" {
-			req.URL.Path = "/"
-		}
-	}
-	return &httputil.ReverseProxy{Director: director}
-}
-
 type templateData struct {
 	Services []serviceData
 }
 
 type serviceData struct {
 	Name         string
+	Port         int
 	Status       string
 	RestartCount int
 	StartTime    time.Time

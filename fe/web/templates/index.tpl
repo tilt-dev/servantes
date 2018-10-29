@@ -123,7 +123,7 @@
               <span>age: {{$service.HumanAge}}</span>
             </li>
           </ul>
-          <iframe frameborder="0" src="/s/{{$service.Name}}"></iframe>
+          <iframe frameborder="0" src="http://localhost:{{$service.Port}}/"></iframe>
         </li>
       {{end}}
     </ul>

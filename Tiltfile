@@ -49,7 +49,9 @@ def fe():
   run('go install github.com/windmilleng/servantes/fe')
   img = stop_build()
 
-  return k8s_service(yaml, img)
+  s = k8s_service(yaml, img)
+  s.port_forward(9000)
+  return s
 
 def vigoda():
   yaml = m4_yaml('vigoda/deployments/vigoda.yaml')
@@ -64,13 +66,17 @@ def vigoda():
   run('go install github.com/windmilleng/servantes/vigoda')
   img = stop_build()
 
-  return k8s_service(yaml, img)
+  s = k8s_service(yaml, img)
+  s.port_forward(9001)
+  return s
 
 def snack():
   yaml = m4_yaml('snack/deployments/snack.yaml')
   img = static_build('snack/Dockerfile',
                      'gcr.io/windmill-public-containers/servantes/snack')
-  return k8s_service(yaml, img)
+  s = k8s_service(yaml, img)
+  s.port_forward(9002)
+  return s
 
 def doggos():
   yaml = m4_yaml('doggos/deployments/doggos.yaml')
@@ -85,7 +91,9 @@ def doggos():
   run('go install github.com/windmilleng/servantes/doggos')
   img = stop_build()
 
-  return k8s_service(yaml, img)
+  s = k8s_service(yaml, img)
+  s.port_forward(9003)
+  return s
 
 def fortune():
   yaml = m4_yaml('fortune/deployments/fortune.yaml')
@@ -101,7 +109,9 @@ def fortune():
   run('go install github.com/windmilleng/servantes/fortune')
   img = stop_build()
 
-  return k8s_service(yaml, img)
+  s = k8s_service(yaml, img)
+  s.port_forward(9004)
+  return s
 
 def hypothesizer():
   yaml = m4_yaml('hypothesizer/deployments/hypothesizer.yaml')
@@ -115,7 +125,9 @@ def hypothesizer():
   run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt')
   img = stop_build()
 
-  return k8s_service(yaml, img)
+  s = k8s_service(yaml, img)
+  s.port_forward(9005)
+  return s
 
 def spoonerisms():
   yaml = m4_yaml('spoonerisms/deployments/spoonerisms.yaml')
@@ -131,7 +143,9 @@ def spoonerisms():
   run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
   img = stop_build()
 
-  return k8s_service(yaml, img)
+  s = k8s_service(yaml, img)
+  s.port_forward(9006)
+  return s
 
 def emoji():
   yaml = m4_yaml('emoji/deployments/emoji.yaml')
@@ -146,4 +160,6 @@ def emoji():
   run('go install github.com/windmilleng/servantes/emoji')
   img = stop_build()
 
-  return k8s_service(yaml, img)
+  s = k8s_service(yaml, img)
+  s.port_forward(9007)
+  return s
