@@ -24,12 +24,11 @@ def setup():
     except LookupError:
         print("don't have wordnet, downloading")
         nltk.download('wordnet')
-        all_words = wn.word()
+        all_words = wn.words()
     global WORDS
     WORDS = [w for w in all_words if w[0].isalpha() and "_" not in w]
 
 
 if __name__ == '__main__':
     setup()
-    print("hello world people!")
     app.run(debug=True, host='0.0.0.0')
