@@ -26,6 +26,9 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
+gy = read_file("hellokubernetes.yaml")
+global_yaml(gy)
+
 def servantes():
   return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms, emoji])
 
