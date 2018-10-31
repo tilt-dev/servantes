@@ -24,14 +24,13 @@ type ServiceSpec struct {
 }
 
 var ServiceSpecs = []ServiceSpec{
+	{"fortune", 9004},
 	{"vigoda", 9001},
 	{"snack", 9002},
 	{"doggos", 9003},
-	{"fortune", 9004},
 	{"hypothesizer", 9005},
 	{"spoonerisms", 9006},
 	{"emoji", 9007},
-	{"words", 9008},
 }
 
 var ServiceSpecMap = make(map[string]ServiceSpec, len(ServiceSpecs))
