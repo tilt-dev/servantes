@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: OWNER-words
+  labels:
+    app: words
+    owner: OWNER
+spec:
+  selector:
+    matchLabels:
+      app: words
+      owner: OWNER
+  template:
+    metadata:
+      labels:
+        app: words
+        tier: web
+        owner: OWNER
+    spec:
+      containers:
+      - name: words
+        image: gcr.io/windmill-public-containers/servantes/words
+        command: ["python", "/app/app.py"]
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "10m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: OWNER-words
+  labels:
+    app: words
+    owner: OWNER
+spec:
+  ports:
+    - port: 80
+      targetPort: 5000
+      protocol: TCP
+  selector:
+    app: words
+    owner: OWNER
