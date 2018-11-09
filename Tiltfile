@@ -74,11 +74,10 @@ def vigoda():
   return s
 
 def snack():
-  yaml = m4_yaml('snack/deployments/snack.yaml')
   repo = local_git_repo('.')
   img = static_build(repo.path('snack/Dockerfile'),
                      'gcr.io/windmill-public-containers/servantes/snack')
-  s = k8s_service(img, yaml=yaml)
+  s = k8s_service(img)
   s.port_forward(9002)
   return s
 

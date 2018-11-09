@@ -41,8 +41,8 @@
 
     <body>
         <main>
-            <p>Get ready for your next snack:</p>
-            <p><strong>{{.}}</strong></p>
+            <p>Get ready for your {{.Type}} snack:</p>
+            <p><strong>{{.Name}}</strong></p>
         </main>
     </body>
 

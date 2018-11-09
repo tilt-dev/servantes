@@ -29,3 +29,35 @@ spec:
         resources:
           requests:
             cpu: "10m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: varowner-emoji-square
+  labels:
+    app: emoji-square
+    owner: varowner
+spec:
+  selector:
+    matchLabels:
+      app: emoji-square
+      owner: varowner
+  template:
+    metadata:
+      labels:
+        app: emoji-square
+        tier: web
+        owner: varowner
+    spec:
+      containers:
+      - name: emoji-square
+        image: gcr.io/windmill-public-containers/servantes/emoji
+        command: ["/go/bin/emoji", "--dimension=2"]
+        env:
+        - name: TEMPLATE_DIR
+          value: "/go/src/github.com/windmilleng/servantes/emoji/web/templates"
+        ports:
+        - containerPort: 8081
+        resources:
+          requests:
+            cpu: "10m"

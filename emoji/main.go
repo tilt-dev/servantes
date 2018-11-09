@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -14,16 +15,24 @@ import (
 )
 
 type TemplateArgs struct {
-	EmojiString string
+	EmojiRows []string
 }
 
+var dimension = flag.Int("dimension", 1, "number of rows of emoji to print")
+
 func main() {
+	flag.Parse()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
-		str := ""
+		rows := []string{}
 		numEmoji := rnd.Intn(6) + 1
-		for i := 0; i < numEmoji; i++ {
-			str += string(emoji.RandomEmoji(rnd))
+		for d := 0; d < *dimension; d++ {
+			str := ""
+			for i := 0; i < numEmoji; i++ {
+				str += string(emoji.RandomEmoji(rnd))
+			}
+			rows = append(rows, str)
 		}
 		t, err := template.ParseFiles(templatePath("index.tpl"))
 		if err != nil {
@@ -32,7 +41,7 @@ func main() {
 			return
 		}
 
-		templateArgs := TemplateArgs{str}
+		templateArgs := TemplateArgs{EmojiRows: rows}
 
 		err = t.Execute(w, templateArgs)
 		if err != nil {
@@ -44,6 +53,7 @@ func main() {
 	})
 
 	log.Println("Starting Emoji Service on :8081")
+	log.Printf("Printing %d rows of emoji\n", *dimension)
 	http.ListenAndServe(":8081", nil)
 }
 

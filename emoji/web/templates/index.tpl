@@ -36,7 +36,9 @@
 
 <body>
     <main>
-        <p class="emoji">{{.EmojiString}}<p>
+      {{range $row := .EmojiRows}}
+        <p class="emoji">{{$row}}<p>
+      {{end}}
     </main>
 </body>
 
