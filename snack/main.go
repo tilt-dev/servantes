@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -41,6 +42,7 @@ func main() {
 		}
 	})
 
+	log.Println("Starting Snack Service on :8083")
 	http.ListenAndServe(":8083", nil)
 }
 

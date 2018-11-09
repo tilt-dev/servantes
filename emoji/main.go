@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/windmilleng/servantes/emoji/pkg/emoji"
 	"html/template"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/windmilleng/servantes/emoji/pkg/emoji"
 )
 
 type TemplateArgs struct {
@@ -41,6 +43,7 @@ func main() {
 
 	})
 
+	log.Println("Starting Emoji Service on :8081")
 	http.ListenAndServe(":8081", nil)
 }
 
