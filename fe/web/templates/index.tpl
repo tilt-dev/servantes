@@ -102,8 +102,10 @@
   }
 
   iframe {
+    display: block;
     overflow: hidden;
-    box-sizing: content-box;
+    position: absolute;
+    box-sizing: border-box;
     border: 1px solid var(--dark-gray);
     width: 100%;
     height: 100%;

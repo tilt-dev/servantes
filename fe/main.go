@@ -57,6 +57,7 @@ func main() {
 	r.HandleFunc("/", handleIndex(*serviceOwner))
 	http.Handle("/", r)
 
+	log.Println("Starting Servantes FE on :8080")
 	http.ListenAndServe(":8080", nil)
 }
 

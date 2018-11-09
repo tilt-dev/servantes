@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -28,6 +29,7 @@ func main() {
 
 	})
 
+	log.Println("Starting Vigoda Health Check Service on :8081")
 	http.ListenAndServe(":8081", nil)
 }
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -25,6 +26,7 @@ func main() {
 		}
 	})
 
+	log.Println("Starting Doggos Service on :8083")
 	http.ListenAndServe(":8083", nil)
 }
 

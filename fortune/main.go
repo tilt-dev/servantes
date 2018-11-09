@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -29,6 +30,7 @@ func main() {
 		}
 	})
 
+	log.Println("Starting Fortune Service on :8082")
 	http.ListenAndServe(":8082", nil)
 }
 
