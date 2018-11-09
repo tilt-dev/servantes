@@ -29,19 +29,3 @@ spec:
         resources:
           requests:
             cpu: "10m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: OWNER-doggos
-  labels:
-    app: doggos
-    owner: OWNER
-spec:
-  ports:
-    - port: 80
-      targetPort: 8083
-      protocol: TCP
-  selector:
-    app: doggos
-    owner: OWNER

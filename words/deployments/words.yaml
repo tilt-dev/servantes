@@ -26,19 +26,3 @@ spec:
         resources:
           requests:
             cpu: "10m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: OWNER-words
-  labels:
-    app: words
-    owner: OWNER
-spec:
-  ports:
-    - port: 80
-      targetPort: 5000
-      protocol: TCP
-  selector:
-    app: words
-    owner: OWNER

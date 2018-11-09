@@ -29,19 +29,3 @@ spec:
         resources:
           requests:
             cpu: "10m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: OWNER-emoji
-  labels:
-    app: emoji
-    owner: OWNER
-spec:
-  ports:
-    - port: 80
-      targetPort: 8081
-      protocol: TCP
-  selector:
-    app: emoji
-    owner: OWNER
