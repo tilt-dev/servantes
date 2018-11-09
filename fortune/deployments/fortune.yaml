@@ -29,19 +29,3 @@ spec:
         resources:
           requests:
             cpu: "10m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: OWNER-fortune
-  labels:
-    app: fortune
-    owner: OWNER
-spec:
-  ports:
-    - port: 80
-      targetPort: 8082
-      protocol: TCP
-  selector:
-    app: fortune
-    owner: OWNER
