@@ -24,6 +24,11 @@ spec:
         env:
         - name: TEMPLATE_DIR
           value: "/go/src/github.com/windmilleng/servantes/fortune/web/templates"
+        - name: THE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: OWNER-servantes-stuff
+              key: fortune
         ports:
         - containerPort: 8082
         resources:

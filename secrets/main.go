@@ -6,17 +6,15 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/windmilleng/servantes/fortune/api"
 )
 
 func main() {
-	f := api.Fortune{
-		Text: "you will have a nice day",
-		Secret: os.Getenv("THE_SECRET"),
-	}
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		message, ok := os.LookupEnv("THE_SECRET")
+		if !ok {
+			message = "uh, oops, idk"
+		}
+
 		t, err := template.ParseFiles(templatePath("index.tpl"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -24,22 +22,19 @@ func main() {
 			return
 		}
 
-		err = t.Execute(w, f)
+		err = t.Execute(w, message)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "error executing template: %v\n", err)
 			return
 		}
+
 	})
 
-	http.ListenAndServe(":8082", nil)
+	http.ListenAndServe(":8081", nil)
 }
 
 func templatePath(f string) string {
 	dir := os.Getenv("TEMPLATE_DIR")
-	if dir == "" {
-		dir = "fortune/web/templates"
-	}
-
 	return filepath.Join(dir, f)
 }

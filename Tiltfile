@@ -26,18 +26,17 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
-gy = read_file("hellokubernetes.yaml")
-global_yaml(gy)
-
-def servantes():
-  return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms, emoji, words])
-
 def get_username():
   return local('whoami').rstrip('\n')
 
 def m4_yaml(file):
   read_file(file)
   return local('m4 -DOWNER=%s %s' % (repr(get_username()), repr(file)))
+
+global_yaml(m4_yaml('./global.yaml'))
+
+def servantes():
+  return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms, emoji, words, secrets])
 
 def fe():
   yaml = m4_yaml('fe/deployments/fe.yaml')
@@ -181,4 +180,19 @@ def words():
 
   s = k8s_service(img, yaml=yaml)
   s.port_forward(9008)
+  return s
+
+def secrets():
+  image_name = 'gcr.io/windmill-public-containers/servantes/secrets'
+
+  start_fast_build('Dockerfile.go.base', image_name)
+  path = '/go/src/github.com/windmilleng/servantes/secrets'
+  repo = local_git_repo('.')
+  add(repo.path('secrets'), path)
+
+  run('go install github.com/windmilleng/servantes/secrets')
+  img = stop_build()
+
+  s = k8s_service(img)  # yaml pulled from global.yaml
+  s.port_forward(9009)
   return s

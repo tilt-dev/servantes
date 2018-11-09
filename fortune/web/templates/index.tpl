@@ -42,7 +42,8 @@
   <body>
     <main>
       <p>Your fortune is:</p>
-      <p><strong>{{.}}</strong></p>
+      <p><strong>{{.Text}}</strong></p>
+      <p><small>Secret: {{.Secret}}</small></p>
     </main>
   </body>
 </html>

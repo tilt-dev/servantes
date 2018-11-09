@@ -32,6 +32,7 @@ var ServiceSpecs = []ServiceSpec{
 	{"spoonerisms", 9006},
 	{"emoji", 9007},
 	{"words", 9008},
+	{"secrets", 9009},
 }
 
 var ServiceSpecMap = make(map[string]ServiceSpec, len(ServiceSpecs))

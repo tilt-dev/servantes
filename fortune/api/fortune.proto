@@ -4,4 +4,5 @@ package api;
 
 message Fortune {
   string text = 1;
+  string secret = 2;
 }
