@@ -51,6 +51,7 @@ def fe():
 
   run('go install github.com/windmilleng/servantes/fe')
   img = stop_build()
+  img.cache('/root/.cache/go-build/')
 
   s = k8s_service(img, yaml=yaml)
   s.port_forward(9000)
