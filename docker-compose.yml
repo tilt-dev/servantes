@@ -1,0 +1,11 @@
+version: '3'
+services:
+  snack:
+    build: ./snack
+    command: /go/bin/snack
+    volumes:
+      - ./snack:/go/src/github.com/windmilleng/servantes/snack
+    ports:
+      - "8083:8083"
+    environment:
+      - TEMPLATE_DIR=/go/src/github.com/windmilleng/servantes/snack/web/templates
