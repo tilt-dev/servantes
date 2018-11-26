@@ -9,3 +9,16 @@ services:
       - "8083:8083"
     environment:
       - TEMPLATE_DIR=/go/src/github.com/windmilleng/servantes/snack/web/templates
+  spoonerisms:
+    build:
+      context: ./spoonerisms
+      dockerfile: ../Dockerfile.js.base
+    command: >
+      bash -c "yarn --cwd /app install
+      && node /app/index.js"
+    volumes:
+      - ./spoonerisms/src:/app
+      - ./spoonerisms/package.json:/app/package.json
+      - ./spoonerisms/yarn.lock:/app/yarn.lock
+    ports:
+      - "9006:5000"
