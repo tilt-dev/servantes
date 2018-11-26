@@ -4,18 +4,18 @@ metadata:
   name: varowner-spoonerisms
   labels:
     app: spoonerisms
-    varowner: varowner
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: spoonerisms
-      varowner: varowner
+      owner: varowner
   template:
     metadata:
       labels:
         app: spoonerisms
         tier: web
-        varowner: varowner
+        owner: varowner
     spec:
       containers:
       - name: spoonerisms

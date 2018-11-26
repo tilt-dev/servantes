@@ -4,18 +4,18 @@ metadata:
   name: varowner-words
   labels:
     app: words
-    varowner: varowner
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: words
-      varowner: varowner
+      owner: varowner
   template:
     metadata:
       labels:
         app: words
         tier: web
-        varowner: varowner
+        owner: varowner
     spec:
       containers:
       - name: words

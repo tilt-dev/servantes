@@ -4,18 +4,18 @@ metadata:
   name: varowner-fe
   labels:
     app: fe
-    varowner: varowner
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: fe
-      varowner: varowner
+      owner: varowner
   template:
     metadata:
       labels:
         app: fe
         tier: web
-        varowner: varowner
+        owner: varowner
     spec:
       containers:
       - name: fe
@@ -35,7 +35,7 @@ metadata:
   name: varowner-fe
   labels:
     app: fe
-    varowner: varowner
+    owner: varowner
 spec:
   type: LoadBalancer
   ports:
@@ -44,7 +44,7 @@ spec:
       protocol: TCP
   selector:
     app: fe
-    varowner: varowner
+    owner: varowner
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1

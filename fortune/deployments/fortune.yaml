@@ -4,18 +4,18 @@ metadata:
   name: varowner-fortune
   labels:
     app: fortune
-    varowner: varowner
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: fortune
-      varowner: varowner
+      owner: varowner
   template:
     metadata:
       labels:
         app: fortune
         tier: web
-        varowner: varowner
+        owner: varowner
     spec:
       containers:
       - name: fortune

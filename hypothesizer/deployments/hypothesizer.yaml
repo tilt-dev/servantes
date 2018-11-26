@@ -4,18 +4,18 @@ metadata:
   name: varowner-hypothesizer
   labels:
     app: hypothesizer
-    varowner: varowner
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: hypothesizer
-      varowner: varowner
+      owner: varowner
   template:
     metadata:
       labels:
         app: hypothesizer
         tier: web
-        varowner: varowner
+        owner: varowner
     spec:
       containers:
       - name: hypothesizer
@@ -33,7 +33,7 @@ metadata:
   name: varowner-hypothesizer
   labels:
     app: hypothesizer
-    varowner: varowner
+    owner: varowner
 spec:
   ports:
     - port: 80
@@ -41,4 +41,4 @@ spec:
       protocol: TCP
   selector:
     app: hypothesizer
-    varowner: varowner
+    owner: varowner

@@ -4,18 +4,18 @@ metadata:
   name: varowner-doggos
   labels:
     app: doggos
-    varowner: varowner
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: doggos
-      varowner: varowner
+      owner: varowner
   template:
     metadata:
       labels:
         app: doggos
         tier: web
-        varowner: varowner
+        owner: varowner
     spec:
       containers:
       - name: doggos

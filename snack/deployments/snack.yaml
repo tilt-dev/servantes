@@ -4,18 +4,18 @@ metadata:
   name: varowner-snack
   labels:
     app: snack
-    varowner: varowner
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: snack
-      varowner: varowner
+      owner: varowner
   template:
     metadata:
       labels:
         app: snack
         tier: web
-        varowner: varowner
+        owner: varowner
     spec:
       containers:
       - name: snack
