@@ -1,0 +1,9 @@
+apiVersion: skaffold/v1alpha5
+kind: Config
+build:
+  artifacts:
+  - image: gcr.io/windmill-public-containers/servantes/snack
+deploy:
+  kubectl:
+    manifests:
+      - ./deployments/snack.yaml

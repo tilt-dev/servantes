@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-spoonerisms
+  name: varowner-spoonerisms
   labels:
     app: spoonerisms
-    owner: OWNER
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: spoonerisms
-      owner: OWNER
+      owner: varowner
   template:
     metadata:
       labels:
         app: spoonerisms
         tier: web
-        owner: OWNER
+        owner: varowner
     spec:
       containers:
       - name: spoonerisms

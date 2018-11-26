@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-snack
+  name: varowner-snack
   labels:
     app: snack
-    owner: OWNER
+    owner: varowner
 spec:
   selector:
     matchLabels:
       app: snack
-      owner: OWNER
+      owner: varowner
   template:
     metadata:
       labels:
         app: snack
         tier: web
-        owner: OWNER
+        owner: varowner
     spec:
       containers:
       - name: snack
