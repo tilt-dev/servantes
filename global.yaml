@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-secrets
+  name: varowner-secrets
   labels:
     app: secrets
-    owner: OWNER
+    varowner: varowner
 spec:
   selector:
     matchLabels:
       app: secrets
-      owner: OWNER
+      varowner: varowner
   template:
     metadata:
       labels:
         app: secrets
         tier: web
-        owner: OWNER
+        varowner: varowner
     spec:
       containers:
       - name: secrets
@@ -27,7 +27,7 @@ spec:
         - name: THE_SECRET
           valueFrom:
             secretKeyRef:
-              name: OWNER-servantes-stuff
+              name: varowner-servantes-stuff
               key: stuff
         ports:
         - containerPort: 8081
@@ -38,10 +38,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: OWNER-secrets
+  name: varowner-secrets
   labels:
     app: secrets
-    owner: OWNER
+    varowner: varowner
 spec:
   ports:
   - port: 80
@@ -49,12 +49,12 @@ spec:
     protocol: TCP
   selector:
     app: secrets
-    owner: OWNER
+    varowner: varowner
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: OWNER-servantes-stuff
+  name: varowner-servantes-stuff
 type: Opaque
 data:
   stuff: aGVsbG8gd29ybGQ=

@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-emoji
+  name: varowner-emoji
   labels:
     app: emoji
-    owner: OWNER
+    varowner: varowner
 spec:
   selector:
     matchLabels:
       app: emoji
-      owner: OWNER
+      varowner: varowner
   template:
     metadata:
       labels:
         app: emoji
         tier: web
-        owner: OWNER
+        varowner: varowner
     spec:
       containers:
       - name: emoji

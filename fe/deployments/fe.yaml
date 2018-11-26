@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-fe
+  name: varowner-fe
   labels:
     app: fe
-    owner: OWNER
+    varowner: varowner
 spec:
   selector:
     matchLabels:
       app: fe
-      owner: OWNER
+      varowner: varowner
   template:
     metadata:
       labels:
         app: fe
         tier: web
-        owner: OWNER
+        varowner: varowner
     spec:
       containers:
       - name: fe
@@ -32,10 +32,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: OWNER-fe
+  name: varowner-fe
   labels:
     app: fe
-    owner: OWNER
+    varowner: varowner
 spec:
   type: LoadBalancer
   ports:
@@ -44,7 +44,7 @@ spec:
       protocol: TCP
   selector:
     app: fe
-    owner: OWNER
+    varowner: varowner
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1

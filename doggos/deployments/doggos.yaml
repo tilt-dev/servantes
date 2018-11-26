@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-doggos
+  name: varowner-doggos
   labels:
     app: doggos
-    owner: OWNER
+    varowner: varowner
 spec:
   selector:
     matchLabels:
       app: doggos
-      owner: OWNER
+      varowner: varowner
   template:
     metadata:
       labels:
         app: doggos
         tier: web
-        owner: OWNER
+        varowner: varowner
     spec:
       containers:
       - name: doggos

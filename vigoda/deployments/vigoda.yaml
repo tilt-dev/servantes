@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-vigoda
+  name: varowner-vigoda
   labels:
     app: vigoda
-    owner: OWNER
+    varowner: varowner
 spec:
   selector:
     matchLabels:
       app: vigoda
-      owner: OWNER
+      varowner: varowner
   template:
     metadata:
       labels:
         app: vigoda
         tier: web
-        owner: OWNER
+        varowner: varowner
     spec:
       containers:
       - name: vigoda

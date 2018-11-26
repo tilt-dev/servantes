@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-fortune
+  name: varowner-fortune
   labels:
     app: fortune
-    owner: OWNER
+    varowner: varowner
 spec:
   selector:
     matchLabels:
       app: fortune
-      owner: OWNER
+      varowner: varowner
   template:
     metadata:
       labels:
         app: fortune
         tier: web
-        owner: OWNER
+        varowner: varowner
     spec:
       containers:
       - name: fortune
@@ -27,7 +27,7 @@ spec:
         - name: THE_SECRET
           valueFrom:
             secretKeyRef:
-              name: OWNER-servantes-stuff
+              name: varowner-servantes-stuff
               key: things
         ports:
         - containerPort: 8082

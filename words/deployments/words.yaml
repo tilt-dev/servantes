@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: OWNER-words
+  name: varowner-words
   labels:
     app: words
-    owner: OWNER
+    varowner: varowner
 spec:
   selector:
     matchLabels:
       app: words
-      owner: OWNER
+      varowner: varowner
   template:
     metadata:
       labels:
         app: words
         tier: web
-        owner: OWNER
+        varowner: varowner
     spec:
       containers:
       - name: words
