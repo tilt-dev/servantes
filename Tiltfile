@@ -3,7 +3,6 @@
 """
 This Tiltfile contains 1 composite service which depends on a number of regular services.
 Here's a quick rundown of these services and their properties:
-
 * Frontend
   * Language: Go
   * Other notes: presents a grid of the results of calling all of the other services
@@ -26,160 +25,71 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
-gy = read_file("hellokubernetes.yaml")
-global_yaml(gy)
-
-def servantes():
-  return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms, emoji, words])
-
-def get_username():
-  return local('whoami').rstrip('\n')
+username = str(local('whoami')).rstrip('\n')
 
 def m4_yaml(file):
   read_file(file)
-  return local('m4 -DOWNER=%s %s' % (repr(get_username()), repr(file)))
+  return local('m4 -DOWNER=%s %s' % (username, file))
 
-def fe():
-  yaml = m4_yaml('fe/deployments/fe.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/fe'
-
-  start_fast_build('Dockerfile.go.base', image_name, '/go/bin/fe --owner ' + get_username())
-  path = '/go/src/github.com/windmilleng/servantes/fe'
+def main():
   repo = local_git_repo('.')
-  add(repo.path('fe'), path)
 
-  run('go install github.com/windmilleng/servantes/fe')
-  img = stop_build()
+  # fe
+  fast_build('gcr.io/windmill-public-containers/servantes/fe', 'Dockerfile.go.base', '/go/bin/fe --owner ' + username) \
+        .add(repo.path('fe'), '/go/src/github.com/windmilleng/servantes/fe') \
+        .run('go install github.com/windmilleng/servantes/fe')
+  k8s_resource('fe', m4_yaml('fe/deployments/fe.yaml'), port_forwards=9000)
 
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9000)
-  return s
+  # vigoda
+  fast_build('gcr.io/windmill-public-containers/servantes/vigoda', 'Dockerfile.go.base') \
+    .add(repo.path('vigoda'), '/go/src/github.com/windmilleng/servantes/vigoda') \
+    .run('go install github.com/windmilleng/servantes/vigoda')
+  k8s_resource('vigoda', m4_yaml('vigoda/deployments/vigoda.yaml'), port_forwards=9001)
 
-def vigoda():
-  yaml = m4_yaml('vigoda/deployments/vigoda.yaml')
+  # snack
+  docker_build('gcr.io/windmill-public-containers/servantes/snack', 'snack')
+  k8s_resource('snack', 'snack/deployments/snack.yaml', port_forwards=9002)
 
-  image_name = 'gcr.io/windmill-public-containers/servantes/vigoda'
+  # doggos
+  fast_build('gcr.io/windmill-public-containers/servantes/doggos', 'Dockerfile.go.base') \
+    .add(repo.path('doggos'), '/go/src/github.com/windmilleng/servantes/doggos') \
+    .run('go install github.com/windmilleng/servantes/doggos')
+  k8s_resource('doggos', m4_yaml('doggos/deployments/doggos.yaml'), port_forwards=9003)
 
-  start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/vigoda'
-  repo = local_git_repo('.')
-  add(repo.path('vigoda'), path)
+  # fortune
+  fast_build('gcr.io/windmill-public-containers/servantes/fortune', 'Dockerfile.go.base') \
+    .add(repo.path('fortune'), '/go/src/github.com/windmilleng/servantes/fortune') \
+    .run('cd src/github.com/windmilleng/servantes/fortune && make proto') \
+    .run('go install github.com/windmilleng/servantes/fortune')
+  k8s_resource('fortune', m4_yaml('fortune/deployments/fortune.yaml'), port_forwards=9004)
 
-  run('go install github.com/windmilleng/servantes/vigoda')
-  img = stop_build()
+  # hypothesizer
+  fast_build('gcr.io/windmill-public-containers/servantes/hypothesizer', 'Dockerfile.py.base') \
+    .add(repo.path('hypothesizer'), '/app') \
+    .run('cd /app && pip install -r requirements.txt')
+  # FIXME(dbentley): handle trigger
+  k8s_resource('hypothesizer', m4_yaml('hypothesizer/deployments/hypothesizer.yaml'), port_forwards=9005)
 
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9001)
-  return s
+  # spoonerisms
+  fast_build('gcr.io/windmill-public-containers/servantes/spoonerisms', 'Dockerfile.js.base', 'node /app/index.js') \
+    .add(repo.path('spoonerisms/src'), '/app') \
+    .add(repo.path('spoonerisms/package.json'), '/app/package.json') \
+    .add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock') \
+    .run('cd /app && yarn install') #FIXME(dbentley): trigger
+  k8s_resource('spoonerisms', m4_yaml('spoonerisms/deployments/spoonerisms.yaml'), port_forwards=9006)
 
-def snack():
-  yaml = m4_yaml('snack/deployments/snack.yaml')
-  repo = local_git_repo('.')
-  img = static_build(repo.path('snack/Dockerfile'),
-                     'gcr.io/windmill-public-containers/servantes/snack')
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9002)
-  return s
+  # emoji
+  fast_build('gcr.io/windmill-public-containers/servantes/emoji', 'Dockerfile.go.base') \
+    .add(repo.path('emoji'), '/go/src/github.com/windmilleng/servantes/emoji') \
+    .run('go install github.com/windmilleng/servantes/emoji')
+  k8s_resource('emoji', m4_yaml('emoji/deployments/emoji.yaml'), port_forwards=9007)
 
-def doggos():
-  yaml = m4_yaml('doggos/deployments/doggos.yaml')
+  # words
+  fast_build('gcr.io/windmill-public-containers/servantes/words', 'Dockerfile.py.base') \
+    .add(repo.path('words'), '/app') \
+    .run('cd /app && pip install -r requirements.txt')
+  # FIXME(dbentley): handle trigger
+  k8s_resource('words', m4_yaml('words/deployments/words.yaml'), port_forwards=9008)
 
-  image_name = 'gcr.io/windmill-public-containers/servantes/doggos'
 
-  start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/doggos'
-  repo = local_git_repo('.')
-  add(repo.path('doggos'), path)
-
-  run('go install github.com/windmilleng/servantes/doggos')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9003)
-  return s
-
-def fortune():
-  yaml = m4_yaml('fortune/deployments/fortune.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/fortune'
-
-  img = start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/fortune'
-  repo = local_git_repo('.')
-  add(repo.path('fortune'), path)
-
-  run('cd src/github.com/windmilleng/servantes/fortune && make proto')
-  run('go install github.com/windmilleng/servantes/fortune')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9004)
-  return s
-
-def hypothesizer():
-  yaml = m4_yaml('hypothesizer/deployments/hypothesizer.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/hypothesizer'
-
-  start_fast_build('Dockerfile.py.base', image_name)
-  repo = local_git_repo('.')
-  add(repo.path('hypothesizer'), "/app")
-
-  run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9005)
-  return s
-
-def spoonerisms():
-  yaml = m4_yaml('spoonerisms/deployments/spoonerisms.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/spoonerisms'
-
-  start_fast_build('Dockerfile.js.base', image_name, 'node /app/index.js')
-  repo = local_git_repo('.')
-  add(repo.path('spoonerisms/src'), '/app')
-  add(repo.path('spoonerisms/package.json'), '/app/package.json')
-  add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
-
-  run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9006)
-  return s
-
-def emoji():
-  yaml = m4_yaml('emoji/deployments/emoji.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/emoji'
-
-  start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/emoji'
-  repo = local_git_repo('.')
-  add(repo.path('emoji'), path)
-
-  run('go install github.com/windmilleng/servantes/emoji')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9007)
-  return s
-
-def words():
-  yaml = m4_yaml('words/deployments/words.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/words'
-
-  start_fast_build('Dockerfile.py.base', image_name)
-  repo = local_git_repo('.')
-  add(repo.path('words'), "/app")
-
-  run('cd /app && pip install -r requirements.txt', trigger='words/requirements.txt')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9008)
-  return s
+main()
