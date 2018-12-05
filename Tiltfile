@@ -32,7 +32,6 @@ def m4_yaml(file):
   read_file(file)
   return local('m4 -DOWNER=%s %s' % (username, file))
 
-
 repo = local_git_repo('.')
 
 yaml_files = [
@@ -49,16 +48,28 @@ yaml_files = [
 
 k8s_yaml([m4_yaml(f) for f in yaml_files])
 
-docker_build('gcr.io/windmill-public-containers/servantes/fe', 'fe')
-docker_build('gcr.io/windmill-public-containers/servantes/vigoda', 'vigoda')
+# docker_build('gcr.io/windmill-public-containers/servantes/fe', 'fe')
+
+
+
+
+# docker_build('gcr.io/windmill-public-containers/servantes/vigoda', 'vigoda')
+# docker_build('gcr.io/windmill-public-containers/servantes/snack', 'snack')
+# docker_build('gcr.io/windmill-public-containers/servantes/doggos', 'doggos')
 
 k8s_resource('fe', port_forwards=9000)
 
-# # fe
+
+# fe
 # fast_build('gcr.io/windmill-public-containers/servantes/fe', 'Dockerfile.go.base', '/go/bin/fe --owner ' + username) \
 #   .add(repo.path('fe'), '/go/src/github.com/windmilleng/servantes/fe') \
 #   .run('go install github.com/windmilleng/servantes/fe')
-# k8s_resource('fe', m4_yaml('fe/deployments/fe.yaml'), port_forwards=9000)
+
+
+
+
+
+
 
 # # vigoda
 # fast_build('gcr.io/windmill-public-containers/servantes/vigoda', 'Dockerfile.go.base') \
