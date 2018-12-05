@@ -30,7 +30,7 @@ username = str(local('whoami')).rstrip('\n')
 
 def m4_yaml(file):
   read_file(file)
-  return local('m4 -DOWNER=%s %s' % (username, file))
+  return local('m4 -Dvarowner=%s %s' % (username, file))
 
 repo = local_git_repo('.')
 

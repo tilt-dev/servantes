@@ -1,0 +1,13 @@
+apiVersion: skaffold/v1alpha5
+kind: Config
+build:
+  artifacts:
+  - image: gcr.io/windmill-public-containers/servantes/snack
+    context: snack
+  - image: gcr.io/windmill-public-containers/servantes/spoonerisms
+    context: spoonerisms
+deploy:
+  kubectl:
+    manifests:
+      - snack/deployments/snack.yaml
+      - spoonerisms/deployments/spoonerisms.yaml
