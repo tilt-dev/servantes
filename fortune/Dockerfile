@@ -1,0 +1,17 @@
+FROM golang:1.10
+
+RUN apt update && apt install -y unzip time make
+
+ENV PROTOC_VERSION 3.5.1
+
+RUN wget https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip && \
+  unzip protoc-${PROTOC_VERSION}-linux-x86_64.zip -d protoc && \
+  mv protoc/bin/protoc /usr/bin/protoc
+
+RUN go get github.com/golang/protobuf/protoc-gen-go
+
+ADD . /go/src/github.com/windmilleng/servantes/fortune
+RUN cd /src/github.com/windmilleng/servantes/fortune && make proto
+RUN go install github.com/windmilleng/servantes/fortune
+
+ENTRYPOINT /go/bin/fortune
