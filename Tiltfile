@@ -27,174 +27,84 @@ Here's a quick rundown of these services and their properties:
 """
 
 def get_username():
-  return local('whoami').rstrip('\n')
+  return str(local('whoami')).rstrip('\n')
 
 def m4_yaml(file):
   read_file(file)
   return local('m4 -Dvarowner=%s %s' % (repr(get_username()), repr(file)))
 
-global_yaml(m4_yaml('./global.yaml'))
+repo = local_git_repo('.')
+k8s_yaml(m4_yaml('./global.yaml'))
 
-def servantes():
-  return composite_service([fe, vigoda, fortune, doggos, snack, hypothesizer, spoonerisms, emoji, words, secrets])
+# Frontend
+# TODO(dmiller): cache
+k8s_resource('fe', m4_yaml('fe/deployments/fe.yaml'), port_forwards=9000)
+fe_img = 'gcr.io/windmill-public-containers/servantes/fe'
+(fast_build(fe_img, 'Dockerfile.go.base', '/go/bin/fe --owner ' + get_username())
+  .add(repo.path('fe'), '/go/src/github.com/windmilleng/servantes/fe')
+  .run('go install github.com/windmilleng/servantes/fe'))
 
-def fe():
-  yaml = m4_yaml('fe/deployments/fe.yaml')
+# Vigoda
+k8s_resource('vigoda', m4_yaml('vigoda/deployments/vigoda.yaml'), port_forwards=9001)
+vigoda_img = 'gcr.io/windmill-public-containers/servantes/vigoda'
+(fast_build(vigoda_img, 'Dockerfile.go.base')
+  .add(repo.path('vigoda'), '/go/src/github.com/windmilleng/servantes/vigoda')
+  .run('go install github.com/windmilleng/servantes/vigoda'))
 
-  image_name = 'gcr.io/windmill-public-containers/servantes/fe'
+# Snack
+k8s_resource('snack', m4_yaml('snack/deployments/snack.yaml'), port_forwards=9002)
+docker_build('gcr.io/windmill-public-containers/servantes/snack', 'snack')
 
-  start_fast_build('Dockerfile.go.base', image_name, '/go/bin/fe --owner ' + get_username())
-  path = '/go/src/github.com/windmilleng/servantes/fe'
-  repo = local_git_repo('.')
-  add(repo.path('fe'), path)
+# Doggos
+k8s_resource('doggos', m4_yaml('doggos/deployments/doggos.yaml'), port_forwards=9003)
+doggos_img = 'gcr.io/windmill-public-containers/servantes/doggos'
+(fast_build(doggos_img, 'Dockerfile.go.base')
+  .add(repo.path('doggos'), '/go/src/github.com/windmilleng/servantes/doggos')
+  .run('go install github.com/windmilleng/servantes/doggos'))
 
-  run('go install github.com/windmilleng/servantes/fe')
-  img = stop_build()
-  img.cache('/root/.cache/go-build/')
+# Fortune
+k8s_resource('fortune', m4_yaml('fortune/deployments/fortune.yaml'), port_forwards=9004)
+fortune_img = 'gcr.io/windmill-public-containers/servantes/fortune'
+(fast_build(fortune_img, 'Dockerfile.go.base')
+  .add(repo.path('fortune'), '/go/src/github.com/windmilleng/servantes/fortune')
+  .run('cd src/github.com/windmilleng/servantes/fortune && make proto')
+  .run('go install github.com/windmilleng/servantes/fortune'))
 
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9000)
-  return s
+# Hypothesizer
+k8s_resource('hypothesizer', m4_yaml('hypothesizer/deployments/hypothesizer.yaml'), port_forwards=9005)
+hyp_img = 'gcr.io/windmill-public-containers/servantes/hypothesizer'
+(fast_build(hyp_img, 'Dockerfile.py.base')
+  .add(repo.path('hypothesizer'), '/app')
+  .run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'))
 
-def vigoda():
-  yaml = m4_yaml('vigoda/deployments/vigoda.yaml')
+# Spoonerisms
+k8s_resource('spoonerisms', m4_yaml('spoonerisms/deployments/spoonerisms.yaml'), port_forwards=9006)
+spoonerism_img = 'gcr.io/windmill-public-containers/servantes/spoonerisms'
+(fast_build(spoonerism_img, 'Dockerfile.js.base', 'node /app/index.js')
+  .add(repo.path('spoonerisms/src'), '/app')
+  .add(repo.path('spoonerisms/package.json'), '/app/package.json')
+  .add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
+  .run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']))
 
-  image_name = 'gcr.io/windmill-public-containers/servantes/vigoda'
+# Emoji
+k8s_resource('emoji', m4_yaml('emoji/deployments/emoji.yaml'), port_forwards=9007)
+emoji_img = 'gcr.io/windmill-public-containers/servantes/emoji'
+(fast_build(emoji_img, 'Dockerfile.go.base')
+  .add(repo.path('emoji'), '/go/src/github.com/windmilleng/servantes/emoji')
+  .run('go install github.com/windmilleng/servantes/emoji'))
 
-  start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/vigoda'
-  repo = local_git_repo('.')
-  add(repo.path('vigoda'), path)
 
-  run('go install github.com/windmilleng/servantes/vigoda')
-  img = stop_build()
+# Words
+k8s_resource('words', m4_yaml('words/deployments/words.yaml'), port_forwards=9008)
+words_img = 'gcr.io/windmill-public-containers/servantes/words'
+(fast_build(words_img, 'Dockerfile.py.base')
+  .add(repo.path('words'), '/app')
+  .run('cd /app && pip install -r requirements.txt', trigger='words/requirements.txt'))
 
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9001)
-  return s
+# Secrets
+secrets_img = 'gcr.io/windmill-public-containers/servantes/secrets'
+sfb = (fast_build(secrets_img, 'Dockerfile.go.base')
+  .add(repo.path('secrets'), '/go/src/github.com/windmilleng/servantes/secrets')
+  .run('go install github.com/windmilleng/servantes/secrets'))
 
-def snack():
-  yaml = m4_yaml('snack/deployments/snack.yaml')
-  repo = local_git_repo('.')
-  img = static_build(repo.path('snack/Dockerfile'),
-                     'gcr.io/windmill-public-containers/servantes/snack')
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9002)
-  return s
-
-def doggos():
-  yaml = m4_yaml('doggos/deployments/doggos.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/doggos'
-
-  start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/doggos'
-  repo = local_git_repo('.')
-  add(repo.path('doggos'), path)
-
-  run('go install github.com/windmilleng/servantes/doggos')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9003)
-  return s
-
-def fortune():
-  yaml = m4_yaml('fortune/deployments/fortune.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/fortune'
-
-  img = start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/fortune'
-  repo = local_git_repo('.')
-  add(repo.path('fortune'), path)
-
-  run('cd src/github.com/windmilleng/servantes/fortune && make proto')
-  run('go install github.com/windmilleng/servantes/fortune')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9004)
-  return s
-
-def hypothesizer():
-  yaml = m4_yaml('hypothesizer/deployments/hypothesizer.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/hypothesizer'
-
-  start_fast_build('Dockerfile.py.base', image_name)
-  repo = local_git_repo('.')
-  add(repo.path('hypothesizer'), "/app")
-
-  run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9005)
-  return s
-
-def spoonerisms():
-  yaml = m4_yaml('spoonerisms/deployments/spoonerisms.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/spoonerisms'
-
-  start_fast_build('Dockerfile.js.base', image_name, 'node /app/index.js')
-  repo = local_git_repo('.')
-  add(repo.path('spoonerisms/src'), '/app')
-  add(repo.path('spoonerisms/package.json'), '/app/package.json')
-  add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
-
-  run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9006)
-  return s
-
-def emoji():
-  yaml = m4_yaml('emoji/deployments/emoji.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/emoji'
-
-  start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/emoji'
-  repo = local_git_repo('.')
-  add(repo.path('emoji'), path)
-
-  run('go install github.com/windmilleng/servantes/emoji')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9007)
-  return s
-
-def words():
-  yaml = m4_yaml('words/deployments/words.yaml')
-
-  image_name = 'gcr.io/windmill-public-containers/servantes/words'
-
-  start_fast_build('Dockerfile.py.base', image_name)
-  repo = local_git_repo('.')
-  add(repo.path('words'), "/app")
-
-  run('cd /app && pip install -r requirements.txt', trigger='words/requirements.txt')
-  img = stop_build()
-
-  s = k8s_service(img, yaml=yaml)
-  s.port_forward(9008)
-  return s
-
-def secrets():
-  image_name = 'gcr.io/windmill-public-containers/servantes/secrets'
-
-  start_fast_build('Dockerfile.go.base', image_name)
-  path = '/go/src/github.com/windmilleng/servantes/secrets'
-  repo = local_git_repo('.')
-  add(repo.path('secrets'), path)
-
-  run('go install github.com/windmilleng/servantes/secrets')
-  img = stop_build()
-
-  s = k8s_service(img)  # yaml pulled from global.yaml
-  s.port_forward(9009)
-  return s
+k8s_resource('secret', image=sfb, port_forwards=9009)
