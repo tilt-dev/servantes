@@ -11,7 +11,7 @@ RUN wget https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}
 RUN go get github.com/golang/protobuf/protoc-gen-go
 
 ADD . /go/src/github.com/windmilleng/servantes/fortune
-RUN cd /src/github.com/windmilleng/servantes/fortune && make proto
+RUN cd /go/src/github.com/windmilleng/servantes/fortune && make proto
 RUN go install github.com/windmilleng/servantes/fortune
 
 ENTRYPOINT /go/bin/fortune

@@ -50,6 +50,7 @@ yamls = [
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
+# k8s_yaml(yamls)
 
 ## Part 2: Images
 

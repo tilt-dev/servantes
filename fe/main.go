@@ -42,8 +42,10 @@ var Client *kubernetes.Clientset
 var serviceOwner = flag.String("owner", "", "If specified, servantes will only use services that have an `owner` label with the given value")
 
 func main() {
+	log.Printf("starting")
 	flag.Parse()
 
+	log.Printf("parsed")
 	client, err := createK8sClient()
 	if err != nil {
 		log.Printf("Error initializing k8s client: %v\n", err)
@@ -168,6 +170,7 @@ func listServicesFromK8sAPI(serviceOwner string) (map[string]serviceData, error)
 	}
 
 	for _, pod := range podList.Items {
+		log.Printf("hrm %+v", pod)
 		if len(serviceOwner) > 0 && pod.ObjectMeta.Labels["owner"] != serviceOwner {
 			continue
 		}

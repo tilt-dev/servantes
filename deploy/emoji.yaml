@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: emoji
-        image: gcr.io/windmill-public-containers/servantes/emoji
+        image: gcr.io/windmill-public-containers/servantes/emoji:varowner-dev
         command: ["/go/bin/emoji"]
         env:
         - name: TEMPLATE_DIR
