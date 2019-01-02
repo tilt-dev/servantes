@@ -33,52 +33,61 @@ def m4_yaml(file):
   read_file(file)
   return local('m4 -Dvarowner=%s %s' % (repr(get_username()), repr(file)))
 
-repo = local_git_repo('.')
+def use_dc():
+  return str(local('echo "${USE_DC:-false}"')).rstrip('\n') == "true"
 
-## Part 1: kubernetes yamls
-yamls = [
-  'deploy/fe.yaml',
-  'deploy/vigoda.yaml',
-  'deploy/snack.yaml',
-  'deploy/doggos.yaml',
-  'deploy/fortune.yaml',
-  'deploy/hypothesizer.yaml',
-  'deploy/spoonerisms.yaml',
-  'deploy/emoji.yaml',
-  'deploy/words.yaml',
-  'deploy/secrets.yaml',
-]
+def main():
+  if use_dc():
+    docker_compose('docker-compose.yml')
+    return
 
-k8s_yaml([m4_yaml(f) for f in yamls])
+  repo = local_git_repo('.')
 
-## Part 2: Images
+  ## Part 1: kubernetes yamls
+  yamls = [
+    'deploy/fe.yaml',
+    'deploy/vigoda.yaml',
+    'deploy/snack.yaml',
+    'deploy/doggos.yaml',
+    'deploy/fortune.yaml',
+    'deploy/hypothesizer.yaml',
+    'deploy/spoonerisms.yaml',
+    'deploy/emoji.yaml',
+    'deploy/words.yaml',
+    'deploy/secrets.yaml',
+  ]
 
-# most services we do docker_builds
-docker_build('gcr.io/windmill-public-containers/servantes/vigoda', 'vigoda')
-docker_build('gcr.io/windmill-public-containers/servantes/snack', 'snack')
-docker_build('gcr.io/windmill-public-containers/servantes/doggos', 'doggos')
-docker_build('gcr.io/windmill-public-containers/servantes/emoji', 'emoji')
-docker_build('gcr.io/windmill-public-containers/servantes/words', 'words')
-docker_build('gcr.io/windmill-public-containers/servantes/secrets', 'secrets')
+  k8s_yaml([m4_yaml(f) for f in yamls])
 
-# fast builds show how we can handle complex cases quickly
-(fast_build('gcr.io/windmill-public-containers/servantes/fe',
-            'Dockerfile.go.base', '/go/bin/fe --owner ' + get_username())
-  .add(repo.path('fe'), '/go/src/github.com/windmilleng/servantes/fe')
-  .run('go install github.com/windmilleng/servantes/fe'))
-(fast_build('gcr.io/windmill-public-containers/servantes/hypothesizer', 'Dockerfile.py.base')
-  .add(repo.path('hypothesizer'), '/app')
-  .run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'))
-(fast_build('gcr.io/windmill-public-containers/servantes/fortune', 'Dockerfile.go.base')
-  .add(repo.path('fortune'), '/go/src/github.com/windmilleng/servantes/fortune')
-  .run('cd src/github.com/windmilleng/servantes/fortune && make proto')
-  .run('go install github.com/windmilleng/servantes/fortune'))
-(fast_build('gcr.io/windmill-public-containers/servantes/spoonerisms', 'Dockerfile.js.base', 'node /app/index.js')
-  .add(repo.path('spoonerisms/src'), '/app')
-  .add(repo.path('spoonerisms/package.json'), '/app/package.json')
-  .add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
-  .run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']))
+  ## Part 2: Images
 
+  # most services we do docker_builds
+  docker_build('gcr.io/windmill-public-containers/servantes/vigoda', 'vigoda')
+  docker_build('gcr.io/windmill-public-containers/servantes/snack', 'snack')
+  docker_build('gcr.io/windmill-public-containers/servantes/doggos', 'doggos')
+  docker_build('gcr.io/windmill-public-containers/servantes/emoji', 'emoji')
+  docker_build('gcr.io/windmill-public-containers/servantes/words', 'words')
+  docker_build('gcr.io/windmill-public-containers/servantes/secrets', 'secrets')
+
+  # fast builds show how we can handle complex cases quickly
+  (fast_build('gcr.io/windmill-public-containers/servantes/fe',
+              'Dockerfile.go.base', '/go/bin/fe --owner ' + get_username())
+    .add(repo.path('fe'), '/go/src/github.com/windmilleng/servantes/fe')
+    .run('go install github.com/windmilleng/servantes/fe'))
+  (fast_build('gcr.io/windmill-public-containers/servantes/hypothesizer', 'Dockerfile.py.base')
+    .add(repo.path('hypothesizer'), '/app')
+    .run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'))
+  (fast_build('gcr.io/windmill-public-containers/servantes/fortune', 'Dockerfile.go.base')
+    .add(repo.path('fortune'), '/go/src/github.com/windmilleng/servantes/fortune')
+    .run('cd src/github.com/windmilleng/servantes/fortune && make proto')
+    .run('go install github.com/windmilleng/servantes/fortune'))
+  (fast_build('gcr.io/windmill-public-containers/servantes/spoonerisms', 'Dockerfile.js.base', 'node /app/index.js')
+    .add(repo.path('spoonerisms/src'), '/app')
+    .add(repo.path('spoonerisms/package.json'), '/app/package.json')
+    .add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
+    .run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']))
+
+  add_ports()
 
 ## Part 3: Resources
 def add_ports(): # we want to add local ports to each service, starting at 9000
@@ -87,4 +96,4 @@ def add_ports(): # we want to add local ports to each service, starting at 9000
     k8s_resource(name, port_forwards=port)
     port += 1
 
-add_ports()
+main()
