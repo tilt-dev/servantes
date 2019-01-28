@@ -47,6 +47,7 @@ yamls = [
   'deploy/emoji.yaml',
   'deploy/words.yaml',
   'deploy/secrets.yaml',
+  'deploy/redis.yaml',
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
@@ -60,6 +61,8 @@ docker_build('gcr.io/windmill-public-containers/servantes/doggos', 'doggos')
 docker_build('gcr.io/windmill-public-containers/servantes/emoji', 'emoji')
 docker_build('gcr.io/windmill-public-containers/servantes/words', 'words')
 docker_build('gcr.io/windmill-public-containers/servantes/secrets', 'secrets')
+
+no_build('docker.io/library/redis:alpine')
 
 # fast builds show how we can handle complex cases quickly
 (fast_build('gcr.io/windmill-public-containers/servantes/fe',
