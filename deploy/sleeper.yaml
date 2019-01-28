@@ -1,21 +1,11 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
-  name: sleep
-  labels:
-    app: sleep
+ name: sleep
+ labels:
+   app: sleep
 spec:
-  selector:
-    matchLabels:
-      app: sleep
-  template:
-    metadata:
-      labels:
-        app: sleep
-    spec:
-      containers:
-      - name: sleep
-        image: gcr.io/windmill-public-containers/servantes/sleep
-        resources:
-          requests:
-            cpu: "10m"
+  restartPolicy: OnFailure
+  containers:
+  - name: sleep
+    image: gcr.io/windmill-public-containers/servantes/sleep
