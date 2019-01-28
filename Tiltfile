@@ -47,6 +47,7 @@ yamls = [
   'deploy/emoji.yaml',
   'deploy/words.yaml',
   'deploy/secrets.yaml',
+  'deploy/job.yaml',
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
