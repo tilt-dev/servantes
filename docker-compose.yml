@@ -20,3 +20,7 @@ services:
       - ./spoonerisms/yarn.lock:/app/yarn.lock
     ports:
       - "9006:5000"
+  vigoda:
+    image: vigoda_for_dc
+    ports:
+      - "9007:8081"

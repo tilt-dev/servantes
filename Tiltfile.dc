@@ -1,3 +1,6 @@
 # -*- mode: Python -*-
 
 docker_compose('docker-compose.yml')
+
+docker_build('vigoda_for_dc', 'vigoda', dockerfile='vigoda/Dockerfile.dc')
+dc_resource('vigoda', image='vigoda_for_dc')

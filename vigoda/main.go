@@ -26,7 +26,7 @@ func main() {
 			fmt.Fprintf(w, "error executing template: %v\n", err)
 			return
 		}
-
+		log.Printf("Yep, still dead.")
 	})
 
 	log.Println("Starting Vigoda Health Check Service on :8081")
