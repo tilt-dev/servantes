@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -222,6 +223,9 @@ func bestStartTime(pod v1.Pod) time.Time {
 	return bestStartTime
 }
 
+// Maximum number of widgets to display
+const maxWidgets = math.MaxInt32
+
 // Format all services as serviceData objects.
 // Fail back to the hard-coded list if we don't have access to the k8s api.
 func listServices(serviceOwner string) []serviceData {
@@ -242,6 +246,10 @@ func listServices(serviceOwner string) []serviceData {
 				Status: "Unknown",
 			})
 		}
+	}
+
+	if len(result) > maxWidgets {
+		result = result[0:maxWidgets]
 	}
 	return result
 }
