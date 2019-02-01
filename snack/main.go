@@ -12,7 +12,11 @@ import (
 )
 
 func main() {
+	// The next line creates an error on startup; uncomment it to cause a CrashLoopBackOff
+	// log.Fatal("Can't Find Necessary Resource File; dying")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// The next line creates an error on request time; uncomment it to cause an error on request.
+		// log.Fatal("NullPointerError trying to service a request")
 		snacks := [...]string{
 			"Spam Musubi",
 			"Pocky Sticks",
