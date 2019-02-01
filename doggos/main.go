@@ -7,9 +7,16 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
+	go func() {
+		for {
+			time.Sleep(3200 * time.Millisecond)
+			log.Printf("Heartbeat")
+		}
+	}()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		t, err := template.ParseFiles(templatePath("index.tpl"))
 		if err != nil {
