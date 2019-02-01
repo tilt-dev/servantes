@@ -16,7 +16,7 @@ This will deploy several microservice apps in to the default namespace of your c
 If you're exploring Tilt via Servantes, here are some things you can do to Servantes to see features of Tilt.
 
 ### Update Your App
-The Snack service is easy to edit. Open the file `snack/main.go` and find the constant strings that are the options for snacks it will recomend. Comment all them out and write "Hello Tilt". Save, and watch Tilt build and update. Then reload Servantes in your web browse and see the new string.
+The Snack service is easy to edit. Open the file `snack/main.go` and find the constant strings that are the options for snacks it will recommend. Comment all them out and write "Hello Tilt". Save, and watch Tilt build and update. Then reload Servantes in your web browse and see the new string.
 
 ### Pinpoint Problems
 Tilt's UX is built to highlight active problems, no matter where they're happening. Here are some ways you can break Servantes and see errors in Tilt.
