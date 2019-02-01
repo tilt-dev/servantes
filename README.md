@@ -1,5 +1,7 @@
 # servantes
-A microservice app that demonstrates the power of (Tilt)[https://tilt.build]
+A microservice app that demonstrates the power of [Tilt](https://tilt.build).
+
+(Like Miguel de Cervantes, but with servers!)
 
 ## Quick start
 1. [Install `tilt`](https://github.com/windmilleng/tilt#installing)
