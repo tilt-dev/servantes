@@ -24,3 +24,9 @@ services:
     image: vigoda_for_dc
     ports:
       - "9007:8081"
+  fortune:
+    image: fortune_for_dc
+    ports:
+      - "9008:8082"
+    environment:
+      - TEMPLATE_DIR=/go/src/github.com/windmilleng/servantes/fortune/web/templates
