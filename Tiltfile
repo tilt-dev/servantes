@@ -30,8 +30,10 @@ def get_username():
   return str(local('whoami')).rstrip('\n')
 
 def m4_yaml(file):
+  filename = file.rsplit("/", 1)[1]
+  name = filename.rsplit(".", 1)[0]
   read_file(file)
-  return local('m4 -Dvarowner=%s %s' % (repr(get_username()), repr(file)))
+  return local('m4 -Dvarowner=%s -Dvarimgname=%s %s' % (repr(get_username()), repr(img_repo(name)), repr(file)))
 
 def img_repo(name):
   # this is the base path of your repo. We default it to gcr.io, but you can change it to be something else
@@ -56,7 +58,7 @@ yamls = [
   'deploy/words.yaml',
   'deploy/secrets.yaml',
   'deploy/job.yaml',
-  'deploy/sleeper.yaml'
+  'deploy/sleep.yaml'
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
@@ -70,7 +72,7 @@ docker_build(img_repo('doggos'), 'doggos')
 docker_build(img_repo('emoji'), 'emoji')
 docker_build(img_repo('words'), 'words')
 docker_build(img_repo('secrets'), 'secrets')
-docker_build(img_repo('sleep'), 'sleeper')
+docker_build(img_repo('sleep'), 'sleep')
 
 # fast builds show how we can handle complex cases quickly
 (fast_build('gcr.io/windmill-public-containers/servantes/fe',

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: doggos
-        image: gcr.io/windmill-public-containers/servantes/doggos
+        image: varimgname
         command: ["/go/bin/doggos"]
         env:
         - name: TEMPLATE_DIR
