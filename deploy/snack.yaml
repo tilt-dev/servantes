@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: snack
-        image: gcr.io/windmill-public-containers/servantes/snack
+        image: varimgname
         command: ["/go/bin/snack"]
         env:
         - name: TEMPLATE_DIR
