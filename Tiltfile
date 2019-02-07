@@ -1,7 +1,7 @@
 # -*- mode: Python -*-
 
 """
-This Tiltfile contains 1 composite service which depends on a number of regular services.
+This Tiltfile contains one external-facing service which depends on a number of internal services.
 Here's a quick rundown of these services and their properties:
 
 * Frontend
