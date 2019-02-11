@@ -277,3 +277,5 @@ type serviceData struct {
 func (d serviceData) HumanAge() string {
 	return duration.ShortHumanDuration(time.Since(d.StartTime))
 }
+
+const maxPossibleWidgets = math.MaxUint32 // allow changing maxWidgets above without having an unused import

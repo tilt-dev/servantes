@@ -3,6 +3,9 @@ A microservice app that demonstrates the power of [Tilt](https://tilt.build).
 
 (Like Miguel de Cervantes, but with servers!)
 
+## Screenshot
+![Screenshot of Servantes](/images/frontend.png)
+
 ## Quick start
 1. [Install `tilt`](https://github.com/windmilleng/tilt#installing)
 2. `git clone git@github.com:windmilleng/servantes.git`
@@ -11,14 +14,11 @@ A microservice app that demonstrates the power of [Tilt](https://tilt.build).
 
 This will deploy several microservice apps in to the default namespace of your current kubernetes cluster. Use the arrow keys to navigate between services in the Tilt HUD. Hit 'b' to open a service in the (B)rowser; the service `fe` is the frontend, and the most interesting to look at.
 
-## Screenshot
-![Screenshot of Servantes](/images/frontend.png)
-
 ## Demo Workflows
 If you're exploring Tilt via Servantes, here are some things you can do to Servantes to see features of Tilt.
 
 ### Update Your App
-The Snack service is easy to edit. Open the file `snack/main.go` and find the constant strings that are the options for snacks it will recommend. Comment all them out and write "Hello Tilt". Save, and watch Tilt build and update. Then reload Servantes in your web browse and see the new string.
+The Snack service is easy to edit. Open the file `snack/main.go` and find the constant strings that are the options for snacks it will recommend. Comment all them out and write in your favorite snack (e.g. `"Snickers",`). Save, and watch Tilt build and update. Then reload Servantes in your web browse and see the new string.
 
 ### Pinpoint Problems
 Tilt's UX is built to highlight active problems, no matter where they're happening. Here are some ways you can break Servantes and see errors in Tilt.
@@ -29,7 +29,16 @@ In `snack/main.go`, type in random characters and save. Tilt will start a build,
 Fix the error and move on.
 
 #### Startup Error
-Kubernetes Pods can get into `CrashLoopBackOff` when they can't startup, e.g. because they can't find a necessary resource file.
+Kubernetes Pods can get into `CrashLoopBackOff` when they can't startup, e.g. because they can't find a necessary resource file. Open `snack/main.go` and find the first `log.Fatal`; uncomment it and save.
+
+Tilt will rebuild, redeploy, and the pod will die. Tilt shows the CrashLoopBackOff in the UI.
+
+Fix the error and move on.
+
+#### Request Error
+In `snack/main.go`, uncomment the second `log.Fatal`. Tilt will rebuild and redeploy and show green. Now reload the front page, and you'll see most of the page load but with one error. Tilt's HUD should show you the dying service.
+
+Fix the error and move on.
 
 ### Interactive Onboarding
 Tilt's onboarding is nifty because you can do it interactively, as described in our [Tutorial](https://docs.tilt.build/tutorial.html). Instead of writing your config first then running Tilt, Tilt watches your config and updates itself as you configure it.
@@ -39,7 +48,9 @@ You can recreate this experience by resetting to a pre-Tilt state and then addin
 2. Run `tilt down` to delete what Tilt has created
 3. Open `Tiltfile` in your editor and delete/comment out the entire contents.
 4. Run `tilt up` with an empty Tiltfile
-5. Add lines back (you'll want to add it back in the order in the original Tiltfile).
+5. Uncomment the `k8s_yaml`.
+6. Uncomment one of the `docker_build` lines.
+7. Uncomment more of the build lines.
 
 You can see Tilt spring to life as it gets more data.
 
