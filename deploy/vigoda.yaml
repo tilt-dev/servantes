@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: vigoda
-        image: gcr.io/windmill-public-containers/servantes/vigoda
+        image: varimgname
         command: ["/go/bin/vigoda"]
         env:
         - name: TEMPLATE_DIR

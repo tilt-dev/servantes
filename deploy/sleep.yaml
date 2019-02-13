@@ -8,4 +8,4 @@ spec:
   restartPolicy: OnFailure
   containers:
   - name: sleep
-    image: gcr.io/windmill-public-containers/servantes/sleep
+    image: varimgname
