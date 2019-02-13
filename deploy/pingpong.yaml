@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: varowner-pingpong
+  labels:
+    app: pingpong
+    owner: varowner
+spec:
+  selector:
+    matchLabels:
+      app: pingpong
+      owner: varowner
+  template:
+    metadata:
+      labels:
+        app: pingpong
+        tier: web
+        owner: varowner
+    spec:
+      containers:
+      - name: pingpong
+        image: gcr.io/windmill-public-containers/servantes/pingpong
+        ports:
+        - containerPort: 8081
+        env:
+          - name: SECRET
+            value: "beep"
+        resources:
+          requests:
+            cpu: "10m"
