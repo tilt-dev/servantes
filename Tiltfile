@@ -58,7 +58,8 @@ yamls = [
   'deploy/words.yaml',
   'deploy/secrets.yaml',
   'deploy/job.yaml',
-  'deploy/sleep.yaml'
+  'deploy/sleep.yaml',
+  'deploy/pingpong.yaml'
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
@@ -103,8 +104,9 @@ add_ports()
 
 ## Part 4: other use cases
 
-# here's a k8s_resource with only YAML and no associated docker_build that we
-# can still port-forward. You can run, manipulate, and see logs for k8s
-# resources out of the box!
+# Here's a k8s_resource with only YAML and no associated docker_build that we
+# can still port-forward. The YAML was passed to `k8s_yaml` above, and we can
+# match it here with the deployment name. You can run, manipulate, and see logs
+# for k8s resources out of the box!
 # To update the `pingpong` container in the cloud, run ./make_pingpong.sh
-k8s_resource('pingpong', yaml=m4_yaml('deploy/pingpong.yaml'), port_forwards=9999)
+k8s_resource('%s-pingpong' % get_username(), port_forwards=9999)
