@@ -30,18 +30,8 @@ def get_username():
   return str(local('whoami')).rstrip('\n')
 
 def m4_yaml(file):
-  filename = file.rsplit("/", 1)[1]
-  name = filename.rsplit(".", 1)[0]
   read_file(file)
-  return local('m4 -Dvarowner=%s -Dvarimgname=%s %s' % (repr(get_username()), repr(img_repo(name)), repr(file)))
-
-def img_repo(name):
-  # this is the base path of your repo. We default it to gcr.io, but you can change it to be something else
-  # for example, if you're using AWS: 950059999999.dkr.ecr.us-west-2.amazonaws.com/
-  # NOTE: you don't need to change this if you're using a local Kubernetes (i.e., docker-for-mac, minikube)
-  base = 'gcr.io/windmill-public-containers/servantes/'
-
-  return base + name
+  return local('m4 -Dvarowner=%s %s' % (repr(get_username()), repr(file)))
 
 repo = local_git_repo('.')
 
@@ -58,7 +48,7 @@ yamls = [
   'deploy/words.yaml',
   'deploy/secrets.yaml',
   'deploy/job.yaml',
-  'deploy/sleep.yaml'
+  'deploy/sleeper.yaml'
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
@@ -66,13 +56,13 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 ## Part 2: Images
 
 # most services we do docker_builds
-docker_build(img_repo('vigoda'), 'vigoda')
-docker_build(img_repo('snack'), 'snack')
-docker_build(img_repo('doggos'), 'doggos')
-docker_build(img_repo('emoji'), 'emoji')
-docker_build(img_repo('words'), 'words')
-docker_build(img_repo('secrets'), 'secrets')
-docker_build(img_repo('sleep'), 'sleep')
+docker_build('gcr.io/windmill-public-containers/servantes/vigoda', 'vigoda')
+docker_build('gcr.io/windmill-public-containers/servantes/snack', 'snack')
+docker_build('gcr.io/windmill-public-containers/servantes/doggos', 'doggos')
+docker_build('gcr.io/windmill-public-containers/servantes/emoji', 'emoji')
+docker_build('gcr.io/windmill-public-containers/servantes/words', 'words')
+docker_build('gcr.io/windmill-public-containers/servantes/secrets', 'secrets')
+docker_build('gcr.io/windmill-public-containers/servantes/sleep', 'sleeper')
 
 # fast builds show how we can handle complex cases quickly
 (fast_build('gcr.io/windmill-public-containers/servantes/fe',

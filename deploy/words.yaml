@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: words
-        image: varimgname
+        image: gcr.io/windmill-public-containers/servantes/words
         command: ["python", "/app/app.py"]
         ports:
         - containerPort: 5000
