@@ -48,7 +48,8 @@ yamls = [
   'deploy/words.yaml',
   'deploy/secrets.yaml',
   'deploy/job.yaml',
-  'deploy/sleeper.yaml'
+  'deploy/sleeper.yaml',
+  'deploy/hello_world.yaml'
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
@@ -90,3 +91,10 @@ def add_ports(): # we want to add local ports to each service, starting at 9000
     port += 1
 
 add_ports()
+
+## Part 4: other use cases
+
+# here's a k8s_resource with only YAML and no associated docker_build that we
+# can still port-forward. You can run, manipulate, and see logs for k8s
+# resources out of the box!
+k8s_resource('hello-world', port_forwards=9999)
