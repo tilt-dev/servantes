@@ -31,7 +31,7 @@ def get_username():
 
 def m4_yaml(file):
   read_file(file)
-  return yaml(local('m4 -Dvarowner=%s %s' % (repr(get_username()), repr(file))))
+  return local('m4 -Dvarowner=%s %s' % (repr(get_username()), repr(file)))
 
 repo = local_git_repo('.')
 
