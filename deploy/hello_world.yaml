@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  labels:
+    app: hello-world
+    owner: varowner
+spec:
+  selector:
+    matchLabels:
+      app: hello-world
+      owner: varowner
+  template:
+    metadata:
+      labels:
+        app: hello-world
+        tier: web
+        owner: varowner
+    spec:
+      containers:
+      - name: hello-world
+        image: strm/helloworld-http
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "10m"
