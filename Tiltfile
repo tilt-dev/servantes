@@ -26,7 +26,7 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
-username() = str(local('whoami')).rstrip('\n')
+username = str(local('whoami')).rstrip('\n')
 
 def m4_yaml(file):
   read_file(file)
