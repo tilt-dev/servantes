@@ -26,12 +26,11 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
-def get_username():
-  return str(local('whoami')).rstrip('\n')
+username = str(local('whoami')).rstrip('\n')
 
 def m4_yaml(file):
   read_file(file)
-  return local('m4 -Dvarowner=%s %s' % (repr(get_username()), repr(file)))
+  return local('m4 -Dvarowner=%s %s' % (username, repr(file)))
 
 repo = local_git_repo('.')
 
@@ -68,7 +67,7 @@ docker_build('gcr.io/windmill-public-containers/servantes/sleep', 'sleeper')
 
 # fast builds show how we can handle complex cases quickly
 (fast_build('gcr.io/windmill-public-containers/servantes/fe',
-            'Dockerfile.go.base', '/go/bin/fe --owner ' + get_username())
+            'Dockerfile.go.base', '/go/bin/fe --owner ' + username)
   .add(repo.path('fe'), '/go/src/github.com/windmilleng/servantes/fe')
   .run('go install github.com/windmilleng/servantes/fe'))
 (fast_build('gcr.io/windmill-public-containers/servantes/hypothesizer', 'Dockerfile.py.base')
