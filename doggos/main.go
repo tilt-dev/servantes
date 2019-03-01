@@ -14,7 +14,7 @@ func main() {
 	go func() {
 		for {
 			time.Sleep(3200 * time.Millisecond)
-			log.Printf("Heartbeat")
+			log.Printf("Who's a good boy?!")
 		}
 	}()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

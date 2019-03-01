@@ -1,0 +1,13 @@
+# -*- mode: Python -*-
+
+k8s_yaml('deploy/snackdog.yaml')
+
+docker_build('snackdog/snack', 'snack')
+docker_build('snackdog/doggos', 'doggos')
+
+# custom_build(
+#  'snackdog/snack',
+#  'docker build -t $TAG ./snack',
+#  ["./snack"],
+# )
+# k8s_resource('snackdog', 'deploy/snackdog.yaml', port_forwards=8100)

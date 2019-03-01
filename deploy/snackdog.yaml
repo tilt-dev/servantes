@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snackdog
+  labels:
+    app: snackdog
+spec:
+  selector:
+    matchLabels:
+      app: snackdog
+  template:
+    metadata:
+      labels:
+        app: snackdog
+        tier: web
+    spec:
+      containers:
+      - name: doggos
+        image: snackdog/doggos
+        command: ["/go/bin/doggos"]
+        env:
+        - name: TEMPLATE_DIR
+          value: "/go/src/github.com/windmilleng/servantes/doggos/web/templates"
+        ports:
+        - containerPort: 8083
+        resources:
+          requests:
+            cpu: "10m"
+      - name: snack
+        image: snackdog/snack
+        command: ["/go/bin/snack"]
+        env:
+          - name: TEMPLATE_DIR
+            value: "/go/src/github.com/windmilleng/servantes/snack/web/templates"
+        ports:
+          - containerPort: 8082
+        resources:
+          requests:
+            cpu: "10m"

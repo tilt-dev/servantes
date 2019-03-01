@@ -12,6 +12,12 @@ import (
 )
 
 func main() {
+	go func() {
+		for {
+			time.Sleep(3400 * time.Millisecond)
+			log.Printf("Om nom snacks.")
+		}
+	}()
 	// The next line creates an error on startup; uncomment it to cause a CrashLoopBackOff
 	// log.Fatal("Can't Find Necessary Resource File; dying")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -46,8 +52,8 @@ func main() {
 		}
 	})
 
-	log.Println("Starting Snack Service on :8083")
-	http.ListenAndServe(":8083", nil)
+	log.Println("Starting Snack Service on :8082")
+	http.ListenAndServe(":8082", nil)
 }
 
 func templatePath(f string) string {
