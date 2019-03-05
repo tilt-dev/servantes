@@ -29,3 +29,8 @@ spec:
         resources:
           requests:
             cpu: "10m"
+      - name: sidecar
+        image: gcr.io/windmill-public-containers/servantes/sidecar
+        resources:
+          requests:
+            cpu: "10m"

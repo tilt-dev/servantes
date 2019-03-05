@@ -14,7 +14,7 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses static_build
 * Doggos
   * Language: Go
-  * Other notes: Has a JS component
+  * Other notes: Has a JS component, and a sidecar that yells a lot
 * Fortune
   * Language: Go
   * Other notes: Uses protobufs
@@ -64,6 +64,7 @@ docker_build('gcr.io/windmill-public-containers/servantes/emoji', 'emoji')
 docker_build('gcr.io/windmill-public-containers/servantes/words', 'words')
 docker_build('gcr.io/windmill-public-containers/servantes/secrets', 'secrets')
 docker_build('gcr.io/windmill-public-containers/servantes/sleep', 'sleeper')
+docker_build('gcr.io/windmill-public-containers/servantes/sidecar', 'sidecar')
 
 # fast builds show how we can handle complex cases quickly
 (fast_build('gcr.io/windmill-public-containers/servantes/fe',
