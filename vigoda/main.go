@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -20,19 +19,7 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		time := "10:00am"
 
-		t, err := template.ParseFiles(templatePath("index.tpl"))
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "error parsing template: %v\n", err)
-			return
-		}
-
-		err = t.Execute(w, time)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "error executing template: %v\n", err)
-			return
-		}
+		fmt.Fprintf(w, time)
 		log.Printf("Yep, still dead.")
 	})
 

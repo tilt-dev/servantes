@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
@@ -31,18 +30,10 @@ func main() {
 		rand.Seed(time.Now().Unix())
 		s := snacks[rand.Intn(len(snacks))]
 
-		t, err := template.ParseFiles(templatePath("index.tpl"))
+		_, err := fmt.Fprintf(w, s)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "error parsing template: %v\n", err)
-			return
-		}
-
-		err = t.Execute(w, s)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "error executing template: %v\n", err)
-			return
+			fmt.Fprintf(w, "error writing response: %v\n", err)
 		}
 	})
 
