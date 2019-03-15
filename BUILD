@@ -9,6 +9,8 @@ k8s_object(
   # A template of a Kubernetes Deployment object yaml.
   template = ":deploy/vigoda.yaml",
 
+  cluster = "gke_blorg-dev_us-central1-b_blorg",
+
   # An optional collection of docker_build images to publish
   # when this target is bazel run.  The digest of the published
   # image is substituted as a part of the resolution process.
@@ -23,6 +25,8 @@ k8s_object(
 
   # A template of a Kubernetes Deployment object yaml.
   template = ":deploy/snack.yaml",
+
+  cluster = "gke_blorg-dev_us-central1-b_blorg",
 
   # An optional collection of docker_build images to publish
   # when this target is bazel run.  The digest of the published
