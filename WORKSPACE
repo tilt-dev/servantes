@@ -2,7 +2,7 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 git_repository(
     name = "io_bazel_rules_docker",
-    commit = "fe714ea132f4d7252d04b1192d07249f551caef5",
+    commit = "db6d42869d376a7cd4f3260bc26d20d695cebc0d",
     remote = "https://github.com/bazelbuild/rules_docker.git",
 )
 
@@ -43,3 +43,14 @@ _go_image_repos()
 load("@io_bazel_rules_go//go:def.bzl", "go_rules_dependencies", "go_register_toolchains")
 go_rules_dependencies()
 go_register_toolchains()
+
+load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
+
+container_pull(
+    name = "gobase",
+    registry = "docker.io",
+    repository = "golang",
+    digest = "sha256:5f7781ceb97dd23c28f603c389d71a0ce98f9f6c78aa8cbd12b6ca836bfc6c6c",
+    os = "linux",
+    architecture = "amd64",
+)

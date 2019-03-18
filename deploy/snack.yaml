@@ -20,7 +20,6 @@ spec:
       containers:
       - name: snack
         image: gcr.io/windmill-public-containers/servantes/snack
-        command: ["/go/bin/snack"]
         env:
         - name: TEMPLATE_DIR
           value: "/go/src/github.com/windmilleng/servantes/snack/web/templates"
