@@ -78,11 +78,15 @@ docker_build('gcr.io/windmill-public-containers/servantes/sidecar', 'sidecar')
   .add(repo.path('fortune'), '/go/src/github.com/windmilleng/servantes/fortune')
   .run('cd src/github.com/windmilleng/servantes/fortune && make proto')
   .run('go install github.com/windmilleng/servantes/fortune'))
-(fast_build('gcr.io/windmill-public-containers/servantes/spoonerisms', 'Dockerfile.js.base', 'node /app/index.js')
-  .add(repo.path('spoonerisms/src'), '/app')
-  .add(repo.path('spoonerisms/package.json'), '/app/package.json')
-  .add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
-  .run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']))
+
+# You can also ADD fast build instructions to a normal docker build; we use the fast build
+# instructions to update the live container when possible, otherwise use the docker build
+# instructions for a fresh build + deploy
+spoonerisms = docker_build('gcr.io/windmill-public-containers/servantes/spoonerisms', 'spoonerisms')
+spoonerisms.add(repo.path('spoonerisms/src'), '/app')
+spoonerisms.add(repo.path('spoonerisms/package.json'), '/app/package.json')
+spoonerisms.add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
+spoonerisms.run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
 
 ## Part 3: Resources
 def add_ports(): # we want to add local ports to each service, starting at 9000
