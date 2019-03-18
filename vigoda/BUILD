@@ -6,5 +6,5 @@ go_image(
     name = "image",
     srcs = ["main.go"],
     importpath = "github.com/windmilleng/servantes/vigoda",
-    base = "@gobase//image",
+    #base = "@gobase//image",
 )

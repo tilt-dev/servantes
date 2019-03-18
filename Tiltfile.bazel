@@ -1,0 +1,69 @@
+BAZEL_RUN_CMD = "bazel run %s"
+
+BAZEL_SOURCES_CMD = """bazel query 'kind("source file", deps(set(%s)))'"""
+
+BAZEL_BUILDFILES_CMD = "bazel query 'buildfiles(deps(set(%s)))'"
+
+def bazel_k8s(target):
+    """Get YAML and dependencies from a k8s_object or similar Bazel target.
+
+    Args:
+        target (str): An executable Bazel target that outputs YAML when run.
+
+    Returns:
+        str: The YAML or other output from running the target.
+    """
+    yaml = local(BAZEL_RUN_CMD % target)
+
+    dep_labels = str(local(BAZEL_SOURCES_CMD % target)).splitlines()
+    dep_labels += str(local(BAZEL_BUILDFILES_CMD % target)).splitlines()
+
+    dep_files = {}
+    for l in dep_labels:
+        if l.startswith("@"):
+            continue
+        elif l.startswith("//external/") or l.startswith("//external:"):
+            continue
+        elif l.startswith("//"):
+            l = l[2:]
+
+        path = l.replace(":", "/")
+        if path.startswith("/"):
+            path = path[1:]
+
+        dep_files[path] = None
+
+    for f in dep_files:
+        read_file(f)
+
+    return yaml
+
+def bazel_build(image, target):
+  dep_labels = str(local(BAZEL_SOURCES_CMD % target)).splitlines()
+  dep_files = []
+  for l in dep_labels:
+    if l.startswith("@"):
+      continue
+    elif l.startswith("//external/") or l.startswith("//external:"):
+      continue
+    elif l.startswith("//"):
+      l = l[2:]
+
+    path = l.replace(":", "/")
+    if path.startswith("/"):
+      path = path[1:]
+
+    dep_files.append(path)
+
+    for f in dep_files:
+      print(f)
+      read_file(f)
+
+  custom_build(
+    image,
+    'bazel run --define tag=$TAG %s' % target,
+    dep_files,
+  )
+
+k8s_yaml(bazel_k8s(":snack-server"))
+bazel_build('gcr.io/windmill-public-containers/servantes/snack', "//snack:tilt")
