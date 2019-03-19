@@ -4,6 +4,8 @@ BAZEL_SOURCES_CMD = """bazel query 'kind("source file", deps(set(%s)))'"""
 
 BAZEL_BUILDFILES_CMD = "bazel query 'buildfiles(deps(set(%s)))'"
 
+PLATFORM_FLAG = "--platforms=@io_bazel_rules_go//go/toolchain:linux_amd64"
+
 def bazel_k8s(target):
     """Get YAML and dependencies from a k8s_object or similar Bazel target.
 
@@ -61,7 +63,7 @@ def bazel_build(image, target):
 
   custom_build(
     image,
-    'bazel run --define tag=$TAG %s' % target,
+    'bazel run %s --define tag=$TAG %s' % (PLATFORM_FLAG, target),
     dep_files,
   )
 
