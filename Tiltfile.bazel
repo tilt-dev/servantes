@@ -63,8 +63,9 @@ def bazel_build(image, target):
 
   custom_build(
     image,
-    'bazel run %s --define tag=$TAG %s' % (PLATFORM_FLAG, target),
+    'bazel run %s %s' % (PLATFORM_FLAG, target),
     dep_files,
+    tag="tilt-bazel"
   )
 
 k8s_yaml(bazel_k8s(":snack-server"))

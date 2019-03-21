@@ -12,6 +12,6 @@ go_image(
 container_bundle(
   name = "tilt",
   images = {
-    "$(tag)": "image",
+    "gcr.io/windmill-public-containers/servantes/vigoda:tilt-bazel": "image",
   }
 )

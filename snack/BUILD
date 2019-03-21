@@ -13,6 +13,6 @@ go_image(
 container_bundle(
   name = "tilt",
   images = {
-    "$(tag)": "image",
+    "gcr.io/windmill-public-containers/servantes/snack:tilt-bazel": "image",
   }
 )
