@@ -10,13 +10,6 @@ k8s_object(
   template = ":deploy/vigoda.yaml",
 
   cluster = "gke_blorg-dev_us-central1-b_blorg",
-
-  # An optional collection of docker_build images to publish
-  # when this target is bazel run.  The digest of the published
-  # image is substituted as a part of the resolution process.
-  images = {
-    "gcr.io/windmill-public-containers/servantes/vigoda": "//vigoda:image"
-  },
 )
 
 k8s_object(
@@ -27,11 +20,4 @@ k8s_object(
   template = ":deploy/snack.yaml",
 
   cluster = "gke_blorg-dev_us-central1-b_blorg",
-
-  # An optional collection of docker_build images to publish
-  # when this target is bazel run.  The digest of the published
-  # image is substituted as a part of the resolution process.
-  images = {
-    "gcr.io/windmill-public-containers/servantes/snack": "//snack:image"
-  },
 )

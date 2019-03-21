@@ -57,10 +57,6 @@ def bazel_build(image, target):
 
     dep_files.append(path)
 
-    for f in dep_files:
-      print(f)
-      read_file(f)
-
   custom_build(
     image,
     'bazel run %s --define tag=$TAG %s' % (PLATFORM_FLAG, target),
