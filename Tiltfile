@@ -26,14 +26,12 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
-fs = listdir('.')
-if 'tilt_personal.json' in fs:
-  # TODO(dbentley): use the default flag to read_json
-  settings = read_json('tilt_personal.json')
-else:
-  settings = {'default_registry': 'gcr.io/windmill-public-containers/servantes'}
-default_registry(settings.get('default_registry', 'gcr.io/windmill-public-containers/servantes'))
 
+# Read an option from the file tilt_option.json
+# Create this file with json like { "default_registry": "gcr.io/my-personal-project" }
+# tilt_option.json is .gitignore'd, so you'll have a clean status
+default_registry(read_json('tilt_option.json', {})
+                 .get('default_registry', 'gcr.io/windmill-public-containers/servantes'))
 
 username = str(local('whoami')).rstrip('\n')
 
