@@ -89,7 +89,7 @@ docker_build('sidecar', 'sidecar')
 # You can also ADD fast build instructions to a normal docker build; we use the fast build
 # instructions to update the live container when possible, otherwise use the docker build
 # instructions for a fresh build + deploy
-spoonerisms = docker_build('gcr.io/windmill-public-containers/servantes/spoonerisms', 'spoonerisms')
+spoonerisms = docker_build('spoonerisms', 'spoonerisms')
 spoonerisms.add(repo.path('spoonerisms/src'), '/app')
 spoonerisms.add(repo.path('spoonerisms/package.json'), '/app/package.json')
 spoonerisms.add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
