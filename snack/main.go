@@ -25,6 +25,7 @@ func main() {
 			"Red Bean Rice Cake",
 			"Pretz Sticks",
 			"Peaches in Agar Jelly",
+			"hello world",
 		}
 
 		rand.Seed(time.Now().Unix())

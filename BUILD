@@ -1,7 +1,5 @@
 load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
 
-exports_files(["vigoda"])
-
 k8s_object(
   name = "vigoda-server",
   kind = "deployment",

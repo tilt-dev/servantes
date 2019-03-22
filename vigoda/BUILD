@@ -8,10 +8,3 @@ go_image(
     srcs = ["main.go"],
     importpath = "github.com/windmilleng/servantes/vigoda",
 )
-
-container_bundle(
-  name = "tilt",
-  images = {
-    "$(tag)": "image",
-  }
-)

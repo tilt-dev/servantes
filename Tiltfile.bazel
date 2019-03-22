@@ -36,6 +36,7 @@ def bazel_k8s(target):
         dep_files[path] = None
 
     for f in dep_files:
+        print("Config dep: " + f)
         read_file(f)
 
     return yaml
@@ -55,19 +56,21 @@ def bazel_build(image, target):
     if path.startswith("/"):
       path = path[1:]
 
+    print("Build dep: " + path)
     dep_files.append(path)
 
   custom_build(
     image,
-    'bazel run %s --define tag=$TAG %s' % (PLATFORM_FLAG, target),
+    'bazel run %s %s' % (PLATFORM_FLAG, target),
     dep_files,
+    tag="image",
   )
 
 k8s_yaml(bazel_k8s(":snack-server"))
 k8s_yaml(bazel_k8s(":vigoda-server"))
 
-bazel_build('gcr.io/windmill-public-containers/servantes/snack', "//snack:tilt")
-bazel_build('gcr.io/windmill-public-containers/servantes/vigoda', "//vigoda:tilt")
+bazel_build('bazel/snack', "//snack:image")
+bazel_build('bazel/vigoda', "//vigoda:image")
 
-k8s_resource('snack', image='gcr.io/windmill-public-containers/servantes/snack', port_forwards=9000)
-k8s_resource('vigoda', image='gcr.io/windmill-public-containers/servantes/vigoda', port_forwards=9001)
+k8s_resource('snack', image='bazel/snack', port_forwards=9000)
+k8s_resource('vigoda', image='bazel.vigoda', port_forwards=9001)
