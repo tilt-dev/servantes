@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: fortune
-        image: gcr.io/windmill-public-containers/servantes/fortune
+        image: fortune
         command: ["/go/bin/fortune"]
         env:
         - name: TEMPLATE_DIR

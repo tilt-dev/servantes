@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: spoonerisms
-        image: gcr.io/windmill-public-containers/servantes/spoonerisms
+        image: spoonerisms
         command: ["node", "/app/index.js"]
         ports:
         - containerPort: 5000

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: doggos
-        image: gcr.io/windmill-public-containers/servantes/doggos
+        image: doggos
         command: ["/go/bin/doggos"]
         env:
         - name: TEMPLATE_DIR
@@ -30,7 +30,7 @@ spec:
           requests:
             cpu: "10m"
       - name: sidecar
-        image: gcr.io/windmill-public-containers/servantes/sidecar
+        image: sidecar
         resources:
           requests:
             cpu: "10m"
