@@ -27,9 +27,9 @@ Here's a quick rundown of these services and their properties:
 """
 
 
-# Read an option from the file tilt_option.json
-# Create this file with json like { "default_registry": "gcr.io/my-personal-project" }
-# tilt_option.json is .gitignore'd, so you'll have a clean status
+# If you get push errors, you can change the default_registry.
+# Create tilt_option.json with contents: {"default_registry": "gcr.io/my-personal-project"}
+# (with your registry inserted). tilt_option.json is gitignore'd, unlike Tiltfile
 default_registry(read_json('tilt_option.json', {})
                  .get('default_registry', 'gcr.io/windmill-public-containers/servantes'))
 
