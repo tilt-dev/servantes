@@ -26,6 +26,15 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
+fs = listdir('.')
+if 'tilt_personal.json' in fs:
+  # TODO(dbentley): use the default flag to read_json
+  settings = read_json('tilt_personal.json')
+else:
+  settings = {'default_registry': 'gcr.io/windmill-public-containers/servantes'}
+default_registry(settings.get('default_registry', 'gcr.io/windmill-public-containers/servantes'))
+
+
 username = str(local('whoami')).rstrip('\n')
 
 def m4_yaml(file):
@@ -57,28 +66,28 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 ## Part 2: Images
 
 # most services we do docker_builds
-docker_build('gcr.io/windmill-public-containers/servantes/vigoda', 'vigoda')
-docker_build('gcr.io/windmill-public-containers/servantes/snack', 'snack')
-docker_build('gcr.io/windmill-public-containers/servantes/doggos', 'doggos')
-docker_build('gcr.io/windmill-public-containers/servantes/emoji', 'emoji')
-docker_build('gcr.io/windmill-public-containers/servantes/words', 'words')
-docker_build('gcr.io/windmill-public-containers/servantes/secrets', 'secrets')
-docker_build('gcr.io/windmill-public-containers/servantes/sleep', 'sleeper')
-docker_build('gcr.io/windmill-public-containers/servantes/sidecar', 'sidecar')
+docker_build('vigoda', 'vigoda')
+docker_build('snack', 'snack')
+docker_build('doggos', 'doggos')
+docker_build('emoji', 'emoji')
+docker_build('words', 'words')
+docker_build('secrets', 'secrets')
+docker_build('sleep', 'sleeper')
+docker_build('sidecar', 'sidecar')
 
 # fast builds show how we can handle complex cases quickly
-(fast_build('gcr.io/windmill-public-containers/servantes/fe',
+(fast_build('fe',
             'Dockerfile.go.base', '/go/bin/fe --owner ' + username)
   .add(repo.path('fe'), '/go/src/github.com/windmilleng/servantes/fe')
   .run('go install github.com/windmilleng/servantes/fe'))
-(fast_build('gcr.io/windmill-public-containers/servantes/hypothesizer', 'Dockerfile.py.base')
+(fast_build('hypothesizer', 'Dockerfile.py.base')
   .add(repo.path('hypothesizer'), '/app')
   .run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'))
-(fast_build('gcr.io/windmill-public-containers/servantes/fortune', 'Dockerfile.go.base')
+(fast_build('fortune', 'Dockerfile.go.base')
   .add(repo.path('fortune'), '/go/src/github.com/windmilleng/servantes/fortune')
   .run('cd src/github.com/windmilleng/servantes/fortune && make proto')
   .run('go install github.com/windmilleng/servantes/fortune'))
-(fast_build('gcr.io/windmill-public-containers/servantes/spoonerisms', 'Dockerfile.js.base', 'node /app/index.js')
+(fast_build('spoonerisms', 'Dockerfile.js.base', 'node /app/index.js')
   .add(repo.path('spoonerisms/src'), '/app')
   .add(repo.path('spoonerisms/package.json'), '/app/package.json')
   .add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
