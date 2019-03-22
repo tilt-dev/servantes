@@ -65,5 +65,9 @@ def bazel_build(image, target):
 
 k8s_yaml(bazel_k8s(":snack-server"))
 k8s_yaml(bazel_k8s(":vigoda-server"))
+
 bazel_build('gcr.io/windmill-public-containers/servantes/snack', "//snack:tilt")
 bazel_build('gcr.io/windmill-public-containers/servantes/vigoda', "//vigoda:tilt")
+
+k8s_resource('snack', image='gcr.io/windmill-public-containers/servantes/snack', port_forwards=9000)
+k8s_resource('vigoda', image='gcr.io/windmill-public-containers/servantes/vigoda', port_forwards=9001)
