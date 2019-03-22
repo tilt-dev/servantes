@@ -1,10 +1,9 @@
-BAZEL_RUN_CMD = "bazel run %s"
+BAZEL_RUN_CMD = "bazel run --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 %s"
 
 BAZEL_SOURCES_CMD = """bazel query 'kind("source file", deps(set(%s)))'"""
 
 BAZEL_BUILDFILES_CMD = "bazel query 'buildfiles(deps(set(%s)))'"
 
-PLATFORM_FLAG = "--platforms=@io_bazel_rules_go//go/toolchain:linux_amd64"
 
 def watch_labels(labels):
   watched_files = []
@@ -34,7 +33,7 @@ def bazel_k8s(target):
     Returns:
         str: The YAML or other output from running the target.
     """
-    yaml = local(BAZEL_RUN_CMD % target)
+    yaml = local("bazel run %s" % target)
 
     dep_labels = str(local(BAZEL_SOURCES_CMD % target)).splitlines()
     dep_labels += str(local(BAZEL_BUILDFILES_CMD % target)).splitlines()
@@ -64,7 +63,7 @@ def bazel_build(image, target):
 
   custom_build(
     image,
-    'bazel run %s %s' % (PLATFORM_FLAG, target),
+    BAZEL_RUN_CMD % target,
     dep_files,
     tag="image",
   )
