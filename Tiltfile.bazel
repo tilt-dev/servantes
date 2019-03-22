@@ -6,6 +6,25 @@ BAZEL_BUILDFILES_CMD = "bazel query 'buildfiles(deps(set(%s)))'"
 
 PLATFORM_FLAG = "--platforms=@io_bazel_rules_go//go/toolchain:linux_amd64"
 
+def watch_labels(labels):
+  watched_files = []
+  for l in labels:
+    if l.startswith("@"):
+      continue
+    elif l.startswith("//external/") or l.startswith("//external:"):
+      continue
+    elif l.startswith("//"):
+      l = l[2:]
+
+    path = l.replace(":", "/")
+    if path.startswith("/"):
+      path = path[1:]
+
+    read_file(path)
+    watched_files.append(path)
+
+  return watched_files
+
 def bazel_k8s(target):
     """Get YAML and dependencies from a k8s_object or similar Bazel target.
 
@@ -20,42 +39,12 @@ def bazel_k8s(target):
     dep_labels = str(local(BAZEL_SOURCES_CMD % target)).splitlines()
     dep_labels += str(local(BAZEL_BUILDFILES_CMD % target)).splitlines()
 
-    dep_files = {}
-    for l in dep_labels:
-        if l.startswith("@"):
-            continue
-        elif l.startswith("//external/") or l.startswith("//external:"):
-            continue
-        elif l.startswith("//"):
-            l = l[2:]
-
-        path = l.replace(":", "/")
-        if path.startswith("/"):
-            path = path[1:]
-
-        dep_files[path] = None
-
-    for f in dep_files:
-        read_file(f)
-
+    watch_labels(dep_labels)
     return yaml
 
 def bazel_build(image, target):
   config_labels = str(local(BAZEL_BUILDFILES_CMD % target)).splitlines()
-  config_files = []
-  for l in config_labels:
-    if l.startswith("@"):
-      continue
-    elif l.startswith("//external/") or l.startswith("//external:"):
-      continue
-    elif l.startswith("//"):
-      l = l[2:]
-
-    path = l.replace(":", "/")
-    if path.startswith("/"):
-      path = path[1:]
-
-    read_file(path)
+  watch_labels(config_labels)
 
   dep_labels = str(local(BAZEL_SOURCES_CMD % target)).splitlines()
   dep_files = []
