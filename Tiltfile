@@ -39,8 +39,6 @@ def m4_yaml(file):
   read_file(file)
   return local('m4 -Dvarowner=%s %s' % (username, repr(file)))
 
-repo = local_git_repo('.')
-
 ## Part 1: kubernetes yamls
 yamls = [
   'deploy/fe.yaml',
@@ -63,7 +61,9 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 
 ## Part 2: Images
 
-# most services we do docker_builds
+docker_build('fe', 'fe')
+docker_build('hypothesizer', 'hypothesizer')
+docker_build('fortune', 'fortune')
 docker_build('vigoda', 'vigoda')
 docker_build('snack', 'snack')
 docker_build('doggos', 'doggos')
@@ -72,28 +72,39 @@ docker_build('words', 'words')
 docker_build('secrets', 'secrets')
 docker_build('sleep', 'sleeper')
 docker_build('sidecar', 'sidecar')
+docker_build('spoonerisms', 'spoonerisms')
 
-# fast builds show how we can handle complex cases quickly
-(fast_build('fe',
-            'Dockerfile.go.base', '/go/bin/fe --owner ' + username)
-  .add(repo.path('fe'), '/go/src/github.com/windmilleng/servantes/fe')
-  .run('go install github.com/windmilleng/servantes/fe'))
-(fast_build('hypothesizer', 'Dockerfile.py.base')
-  .add(repo.path('hypothesizer'), '/app')
-  .run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'))
-(fast_build('fortune', 'Dockerfile.go.base')
-  .add(repo.path('fortune'), '/go/src/github.com/windmilleng/servantes/fortune')
-  .run('cd src/github.com/windmilleng/servantes/fortune && make proto')
-  .run('go install github.com/windmilleng/servantes/fortune'))
+# live updates show how we can handle complex cases quickly
+live_update('fe',
+  [
+    sync('fe', '/go/src/github.com/windmilleng/servantes/fe'),
+    run('go install github.com/windmilleng/servantes/fe'),
+    restart_container(),
+  ])
 
-# You can also ADD fast build instructions to a normal docker build; we use the fast build
-# instructions to update the live container when possible, otherwise use the docker build
-# instructions for a fresh build + deploy
-spoonerisms = docker_build('spoonerisms', 'spoonerisms')
-spoonerisms.add(repo.path('spoonerisms/src'), '/app')
-spoonerisms.add(repo.path('spoonerisms/package.json'), '/app/package.json')
-spoonerisms.add(repo.path('spoonerisms/yarn.lock'), '/app/yarn.lock')
-spoonerisms.run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock'])
+live_update('hypothesizer',
+  [
+    sync('hypothesizer', '/app'),
+    run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'),
+    # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
+  ])
+
+live_update('fortune',
+  [
+    sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
+    run('cd src/github.vcom/windmilleng/servantes/fortune && make proto'),
+    run('go install github.com/windmilleng/servantes/fortune'),
+    restart_container(),
+  ])
+
+live_update('spoonerisms',
+  [
+    sync('spoonerisms/src', '/app'),
+    sync('spoonerisms/package.json', '/app/package.json'),
+    sync('spoonerisms/yarn.lock', '/app/yarn.lock'),
+    run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']),
+    restart_container(),
+  ])
 
 ## Part 3: Resources
 def add_ports(): # we want to add local ports to each service, starting at 9000

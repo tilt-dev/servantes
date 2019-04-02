@@ -43,7 +43,7 @@ You can recreate this experience by resetting to a pre-Tilt state and then addin
 
 You can see Tilt spring to life as it gets more data.
 
-### fast_build
-Tilt can [update Kubernetes in seconds, not minutes](https://medium.com/windmill-engineering/how-tilt-updates-kubernetes-in-seconds-not-minutes-28ddffe2d79f) by using `fast_build`. Because Servantes is a demo app, most services are small enough that they don't need optimizations. We purposely built our frontend to have a slow build (it links in the Kubernetes client library which can take minutes to build). Servantes uses `fast_build` for the frontend to demo Tilt's speed at updating running services.
+### live\_update
+Tilt can [update Kubernetes in seconds, not minutes](https://medium.com/windmill-engineering/how-tilt-updates-kubernetes-in-seconds-not-minutes-28ddffe2d79f) by using `live_update`. Because Servantes is a demo app, most services are small enough that they don't need optimizations. We purposely built our frontend to have a slow build (it links in the Kubernetes client library which can take minutes to build). Servantes uses `live_update` for the frontend to demo Tilt's speed at updating running services.
 
 In `fe/main.go`, change the constant `maxWidgets` to display fewer widgets. Tilt will update `fe` in-place in seconds. Then reload Servantes and you should see your chosen number of services.
