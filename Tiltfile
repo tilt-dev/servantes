@@ -61,28 +61,7 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 
 ## Part 2: Images
 
-docker_build('fe', 'fe',
-             live_update=[
-                           sync('fe', '/go/src/github.com/windmilleng/servantes/fe'),
-                           run('go install github.com/windmilleng/servantes/fe'),
-                           restart_container(),
-                          ]
-             )
-docker_build('hypothesizer', 'hypothesizer',
-             live_update=[
-                           sync('hypothesizer', '/app'),
-                           run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'),
-                           # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
-                         ]
-             )
-docker_build('fortune', 'fortune',
-             live_update=[
-                           sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
-                           run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
-                           run('go install github.com/windmilleng/servantes/fortune'),
-                           restart_container(),
-                         ]
-             )
+# most services are just a simple docker_build
 docker_build('vigoda', 'vigoda')
 docker_build('snack', 'snack')
 docker_build('doggos', 'doggos')
@@ -91,15 +70,40 @@ docker_build('words', 'words')
 docker_build('secrets', 'secrets')
 docker_build('sleep', 'sleeper')
 docker_build('sidecar', 'sidecar')
+
+# we can add live_update steps on top of a docker_build for super fast in-place updates
+docker_build('fe', 'fe',
+  live_update=[
+    sync('fe', '/go/src/github.com/windmilleng/servantes/fe'),
+    run('go install github.com/windmilleng/servantes/fe'),
+    restart_container(),
+  ]
+)
+
+docker_build('hypothesizer', 'hypothesizer',
+  live_update=[
+    sync('hypothesizer', '/app'),
+    run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'),
+    # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
+  ]
+)
+docker_build('fortune', 'fortune',
+  live_update=[
+    sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
+    run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
+    run('go install github.com/windmilleng/servantes/fortune'),
+    restart_container(),
+  ]
+)
 docker_build('spoonerisms', 'spoonerisms',
-             live_update=[
-                           sync('spoonerisms/src', '/app'),
-                           sync('spoonerisms/package.json', '/app/package.json'),
-                           sync('spoonerisms/yarn.lock', '/app/yarn.lock'),
-                           run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']),
-                           restart_container(),
-                         ]
-             )
+  live_update=[
+    sync('spoonerisms/src', '/app'),
+    sync('spoonerisms/package.json', '/app/package.json'),
+    sync('spoonerisms/yarn.lock', '/app/yarn.lock'),
+    run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']),
+    restart_container(),
+  ]
+)
 
 ## Part 3: Resources
 def add_ports(): # we want to add local ports to each service, starting at 9000
