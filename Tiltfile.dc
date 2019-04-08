@@ -5,10 +5,13 @@ docker_compose('docker-compose.yml')
 docker_build('vigoda_for_dc', 'vigoda', dockerfile='vigoda/Dockerfile.dc')
 dc_resource('vigoda', image='vigoda_for_dc')
 
-repo = local_git_repo('.')
-(fast_build('fortune_for_dc', 'Dockerfile.go.base', entrypoint='/go/bin/fortune')
-  .add(repo.path('fortune'), '/go/src/github.com/windmilleng/servantes/fortune')
-  .run('cd src/github.com/windmilleng/servantes/fortune && make proto')
-  .run('go install github.com/windmilleng/servantes/fortune'))
+docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc')
+live_update('fortune_for_dc',
+  [
+    sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
+    run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
+    run('go install github.com/windmilleng/servantes/fortune'),
+    restart_container(),
+  ])
 
 dc_resource('fortune', image='fortune_for_dc')
