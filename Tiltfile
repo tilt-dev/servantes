@@ -1,5 +1,7 @@
 # -*- mode: Python -*-
 
+k8s_resource_assembly_version(2)
+
 """
 This Tiltfile contains one external-facing service which depends on a number of internal services.
 Here's a quick rundown of these services and their properties:
@@ -110,3 +112,8 @@ add_ports()
 # can still port-forward. You can run, manipulate, and see logs for k8s
 # resources out of the box!
 k8s_resource('hello-world', port_forwards=9999)
+
+# strip off the $USER- that we prepend to all deployment names
+def resource_name(id):
+  return id.name.replace(username + '-', '')
+workload_to_resource_function(resource_name)
