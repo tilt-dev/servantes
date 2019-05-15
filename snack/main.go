@@ -12,9 +12,13 @@ import (
 )
 
 func main() {
+	shouldCrash := false
 	// The next line creates an error on startup; uncomment it to cause a CrashLoopBackOff
 	// log.Fatal("Can't Find Necessary Resource File; dying")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if shouldCrash {
+			log.Fatal("NullPointerError trying to service a request")
+		}
 		// The next line creates an error on request time; uncomment it to cause an error on request.
 		// log.Fatal("NullPointerError trying to service a request")
 		snacks := [...]string{
@@ -44,6 +48,14 @@ func main() {
 			fmt.Fprintf(w, "error executing template: %v\n", err)
 			return
 		}
+	})
+
+	http.HandleFunc("/crash", func(w http.ResponseWriter, r *http.Request) {
+		shouldCrash = true
+	})
+
+	http.HandleFunc("/uncrash", func(w http.ResponseWriter, r *http.Request) {
+		shouldCrash = false
 	})
 
 	log.Println("Starting Snack Service on :8083")
