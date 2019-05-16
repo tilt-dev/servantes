@@ -17,7 +17,7 @@
     --dark-gray:    #19282B;
     /* --blue-green: #678072; */
   }
-  
+
   html {
     margin: 0;
   }
@@ -55,14 +55,14 @@
   }
 
   ul.services {
-    display: grid; 
-    width: 100vw; 
+    display: grid;
+    width: 100vw;
     max-width: 100em;
     margin-left: auto;
     margin-right: auto;
     padding: 2em;
-    grid-gap: 2em; 
-    grid-template-columns: repeat(3, 1fr); 
+    grid-gap: 2em;
+    grid-template-columns: repeat(3, 1fr);
     box-sizing: border-box;
   }
 
@@ -74,17 +74,17 @@
     border-right: 10px solid var(--tan);
     border-bottom: 10px solid var(--tan);
     /* Make room for K8s Data */
-    margin-top: 2.5em; 
+    margin-top: 2.5em;
   }
 
   ul.k8s-data {
     color: var(--white-var1);
     background-color: var(--dark-gray);
     position: absolute;
-    font-size: 0.8em; 
+    font-size: 0.8em;
     top: -2.5em;
     height: 2.5em;
-    z-index: 1; 
+    z-index: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -120,8 +120,6 @@
           <ul class="k8s-data">
             <li>{{$service.Name}} — {{$service.Status}}</li>
             <li>
-              <span>restarts: {{$service.RestartCount}}</span>
-              <span>•</span>
               <span>age: {{$service.HumanAge}}</span>
             </li>
           </ul>
