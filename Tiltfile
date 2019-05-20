@@ -56,7 +56,6 @@ yamls = [
   'deploy/job.yaml',
   'deploy/sleeper.yaml',
   'deploy/hello_world.yaml',
-  'deploy/tick.yaml',
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
