@@ -64,7 +64,11 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 
 # most services are just a simple docker_build
 docker_build('vigoda', 'vigoda')
-docker_build('snack', 'snack')
+docker_build('snack', 'snack',
+             live_update=[
+               sync('snack/crash.txt', '/go/src/github.com/windmilleng/servantes/snack/crash.txt'),
+               restart_container()
+             ])
 docker_build('doggos', 'doggos')
 docker_build('emoji', 'emoji')
 docker_build('words', 'words')

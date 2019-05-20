@@ -8,11 +8,13 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 )
 
 func main() {
-	shouldCrash := false
+	shouldCrash := isCrashFilePresent()
+
 	// The next line creates an error on startup; uncomment it to cause a CrashLoopBackOff
 	// log.Fatal("Can't Find Necessary Resource File; dying")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -65,4 +67,18 @@ func main() {
 func templatePath(f string) string {
 	dir := os.Getenv("TEMPLATE_DIR")
 	return filepath.Join(dir, f)
+}
+
+func isCrashFilePresent() bool {
+	_, mainGoPath, _, ok := runtime.Caller(0)
+	if !ok {
+		return false
+	}
+
+	crashFilePath := filepath.Join(filepath.Dir(mainGoPath), "crash.txt")
+	_, err := os.Stat(crashFilePath)
+	if err != nil {
+		return false
+	}
+	return true
 }

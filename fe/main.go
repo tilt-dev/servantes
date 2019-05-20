@@ -91,7 +91,7 @@ func handleRefresh() func(w http.ResponseWriter, r *http.Request) {
 			let el = document.getElementById("iframe-snack");
 			el.src="http://localhost:9002?zx=" + x;
 			x++;
-		}, 1000);
+		}, 3000);
 }, false);`
 		fmt.Fprint(w, string(dat))
 		w.Header().Add("Content-Type", "text/javascript")
