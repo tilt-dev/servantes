@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/duration"
 	"k8s.io/client-go/kubernetes"
@@ -56,6 +56,7 @@ func main() {
 	}
 
 	r := mux.NewRouter()
+	r.HandleFunc("/static/refresh.js", handleRefresh())
 	r.HandleFunc("/", handleIndex(*serviceOwner))
 	http.Handle("/", r)
 
@@ -79,6 +80,21 @@ func handleIndex(serviceOwner string) func(w http.ResponseWriter, r *http.Reques
 				http.StatusInternalServerError)
 			return
 		}
+	}
+}
+
+func handleRefresh() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		dat := `document.addEventListener('DOMContentLoaded', function(){
+		let x = 0;
+		setInterval(() => {
+			let el = document.getElementById("iframe-snack");
+			el.src="http://localhost:9002?zx=" + x;
+			x++;
+		}, 1000);
+}, false);`
+		fmt.Fprint(w, string(dat))
+		w.Header().Add("Content-Type", "text/javascript")
 	}
 }
 

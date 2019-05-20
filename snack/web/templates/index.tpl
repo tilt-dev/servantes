@@ -37,7 +37,6 @@
             }
         </style>
         <link href="https://fonts.googleapis.com/css?family=Poppins:400,800" rel="stylesheet">
-        <meta http-equiv="refresh" content="5">
     </head>
 
     <body>
