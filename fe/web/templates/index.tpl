@@ -63,7 +63,7 @@
     margin-right: auto;
     padding: 2em;
     grid-gap: 2em;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     box-sizing: border-box;
   }
 
