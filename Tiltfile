@@ -1,7 +1,5 @@
 # -*- mode: Python -*-
 
-k8s_resource_assembly_version(2)
-
 """
 This Tiltfile contains one external-facing service which depends on a number of internal services.
 Here's a quick rundown of these services and their properties:
@@ -32,8 +30,10 @@ Here's a quick rundown of these services and their properties:
 # If you get push errors, you can change the default_registry.
 # Create tilt_option.json with contents: {"default_registry": "gcr.io/my-personal-project"}
 # (with your registry inserted). tilt_option.json is gitignore'd, unlike Tiltfile
-default_registry(read_json('tilt_option.json', {})
-                 .get('default_registry', 'gcr.io/windmill-public-containers/servantes'))
+registry = read_json('tilt_option.json', {}).get('default_registry', 'gcr.io/windmill-public-containers/servantes'))
+if k8s_context() == 'microk8s': #microk8s uses a local registry
+  registry = 'localhost:32000'
+default_registry(registry)
 
 username = str(local('whoami')).rstrip('\n')
 
