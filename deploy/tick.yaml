@@ -4,6 +4,7 @@ metadata:
   name: tick
 spec:
   schedule: "*/1 * * * *"
+  startingDeadlineSeconds: 90
   jobTemplate:
     spec:
       template:
