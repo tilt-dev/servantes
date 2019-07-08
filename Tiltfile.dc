@@ -5,9 +5,8 @@ docker_compose('docker-compose.yml')
 docker_build('vigoda_for_dc', 'vigoda', dockerfile='vigoda/Dockerfile.dc')
 dc_resource('vigoda', image='vigoda_for_dc')
 
-docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc')
-live_update('fortune_for_dc',
-  [
+docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc',
+  live_update = [
     sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
     run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
     run('go install github.com/windmilleng/servantes/fortune'),
