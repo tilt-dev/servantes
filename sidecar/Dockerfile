@@ -1,4 +1,6 @@
-FROM alpine
+FROM rust
 
-ADD loud_sidecar.sh /
-ENTRYPOINT ["/loud_sidecar.sh"]
+COPY ./ ./
+
+RUN cargo build --release
+CMD target/release/sidecar
