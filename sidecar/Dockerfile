@@ -1,4 +1,4 @@
-FROM rust
+FROM rustlang/rust:nightly
 
 COPY ./ ./
 
