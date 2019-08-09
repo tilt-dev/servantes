@@ -118,7 +118,7 @@ docker_build('doggos', 'doggos',
 docker_build('sidecar', 'sidecar',
   live_update=[
     sync('sidecar/src/', '/src/'),
-    run('cargo build'),
+    run('cargo build --release'),
     restart_container(),
   ])
 
