@@ -9,12 +9,13 @@ import (
 	"path/filepath"
 	"time"
 )
-
+var heartbeat = "heartbeat"
+var msg = &heartbeat
 func main() {
 	go func() {
 		for {
 			time.Sleep(3200 * time.Millisecond)
-			log.Printf("Heartbeat")
+			log.Printf(*msg)
 		}
 	}()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +32,7 @@ func main() {
 			fmt.Fprintf(w, "error executing template: %v\n", err)
 			return
 		}
+		msg = nil
 	})
 
 	log.Println("Starting Doggos Service on :8083")
