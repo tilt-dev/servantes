@@ -67,12 +67,12 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 # most services are just a simple docker_build
 docker_build('vigoda', 'vigoda')
 docker_build('snack', 'snack')
-docker_build('doggos', 'doggos')
 docker_build('emoji', 'emoji')
 docker_build('words', 'words')
 docker_build('secrets', 'secrets')
 docker_build('sleep', 'sleeper')
-docker_build('sidecar', 'sidecar')
+
+enable_feature('multiple_containers_per_pod')
 
 # we can add live_update steps on top of a docker_build for super fast in-place updates
 docker_build('fe', 'fe',
@@ -107,6 +107,20 @@ docker_build('spoonerisms', 'spoonerisms',
     restart_container(),
   ]
 )
+
+# These two services run on the same container -- we can live update them both!
+docker_build('doggos', 'doggos',
+  live_update=[
+    sync('doggos', '/go/src/github.com/windmilleng/servantes/doggos'),
+    run('go install github.com/windmilleng/servantes/doggos'),
+    restart_container(),
+])
+docker_build('sidecar', 'sidecar',
+  live_update=[
+    sync('sidecar/src/', '/src/'),
+    run('cargo build --release'),
+    restart_container(),
+  ])
 
 ## Part 3: Resources
 def add_ports(): # we want to add local ports to each service, starting at 9000
