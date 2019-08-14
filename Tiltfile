@@ -1,5 +1,5 @@
 # -*- mode: Python -*-
-enable_feature("team_alerts")
+enable_feature("snapshots")
 
 k8s_resource_assembly_version(2)
 
