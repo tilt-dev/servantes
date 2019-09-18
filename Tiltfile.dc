@@ -1,12 +1,13 @@
 # -*- mode: Python -*-
-enable_feature("team_alerts")
+enable_feature("snapshots")
 
 docker_compose('docker-compose.yml')
 
+# if docker-compose.yml specifies an `Image`, Tilt will auto-associate
+# a docker_build of the same name with that service.
 docker_build('vigoda_for_dc', 'vigoda', dockerfile='vigoda/Dockerfile.dc')
-dc_resource('vigoda', image='vigoda_for_dc')
 
-docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc',
+docker_build('servantes_fortune', 'fortune', dockerfile='fortune/Dockerfile.dc',
   live_update = [
     sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
     run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
@@ -14,4 +15,8 @@ docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc',
     restart_container(),
   ])
 
-dc_resource('fortune', image='fortune_for_dc')
+# if docker-compose.yml doesn't explicitly set `Image` for a service,
+# you can use `dc_resource` to configure the docker_build <--> DC service
+# linkage. NOTE: image name must be in the form expected by Docker Compose,
+# i.e. <directory>_<service>
+dc_resource('fortune', image='servantes_fortune')
