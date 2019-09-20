@@ -7,16 +7,10 @@ docker_compose('docker-compose.yml')
 # a docker_build of the same name with that service.
 docker_build('vigoda_for_dc', 'vigoda', dockerfile='vigoda/Dockerfile.dc')
 
-docker_build('servantes_fortune', 'fortune', dockerfile='fortune/Dockerfile.dc',
+docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc',
   live_update = [
     sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
     run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
     run('go install github.com/windmilleng/servantes/fortune'),
     restart_container(),
   ])
-
-# if docker-compose.yml doesn't explicitly set `Image` for a service,
-# you can use `dc_resource` to configure the docker_build <--> DC service
-# linkage. NOTE: image name must be in the form expected by Docker Compose,
-# i.e. <directory>_<service>
-dc_resource('fortune', image='servantes_fortune')

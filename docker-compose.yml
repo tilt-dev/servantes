@@ -25,7 +25,7 @@ services:
     ports:
       - "9007:8081"
   fortune:
-    build: ./fortune
+    image: fortune_for_dc
     ports:
       - "9008:8082"
     environment:
