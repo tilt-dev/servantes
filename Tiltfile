@@ -3,6 +3,8 @@ enable_feature("snapshots")
 
 k8s_resource_assembly_version(2)
 
+set_team("3e8e3af3-52e7-4f86-9006-9b1cce9ec85d")
+
 """
 This Tiltfile contains one external-facing service which depends on a number of internal services.
 Here's a quick rundown of these services and their properties:
