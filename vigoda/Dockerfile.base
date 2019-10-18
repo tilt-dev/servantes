@@ -1,0 +1,5 @@
+# syntax = docker/dockerfile:experimental
+FROM golang:1.10
+
+ADD . /go/src/github.com/windmilleng/servantes/vigoda
+RUN --mount=type=cache,target=/root/.cache/go-build go install github.com/windmilleng/servantes/vigoda

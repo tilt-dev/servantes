@@ -1,0 +1,6 @@
+# syntax = docker/dockerfile:experimental
+FROM vigodabase
+
+RUN --mount=type=cache,target=/root/.cache/go-build echo hello
+
+ENTRYPOINT /go/bin/vigoda

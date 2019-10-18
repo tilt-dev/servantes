@@ -45,20 +45,7 @@ def m4_yaml(file):
 
 ## Part 1: kubernetes yamls
 yamls = [
-  'deploy/fe.yaml',
   'deploy/vigoda.yaml',
-  'deploy/snack.yaml',
-  'deploy/doggos.yaml',
-  'deploy/fortune.yaml',
-  'deploy/hypothesizer.yaml',
-  'deploy/spoonerisms.yaml',
-  'deploy/emoji.yaml',
-  'deploy/words.yaml',
-  'deploy/secrets.yaml',
-  'deploy/job.yaml',
-  'deploy/sleeper.yaml',
-  'deploy/hello_world.yaml',
-  'deploy/tick.yaml',
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
@@ -66,78 +53,10 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 ## Part 2: Images
 
 # most services are just a simple docker_build
-docker_build('vigoda', 'vigoda')
-docker_build('snack', 'snack')
-docker_build('emoji', 'emoji')
-docker_build('words', 'words')
-docker_build('secrets', 'secrets')
-docker_build('sleep', 'sleeper')
+docker_build('vigodabase', 'vigoda', dockerfile='./vigoda/Dockerfile.base')
+docker_build('vigoda', 'vigoda', dockerfile='./vigoda/Dockerfile.child')
 
-enable_feature('multiple_containers_per_pod')
-
-# we can add live_update steps on top of a docker_build for super fast in-place updates
-docker_build('fe', 'fe',
-  live_update=[
-    sync('fe', '/go/src/github.com/windmilleng/servantes/fe'),
-    run('go install github.com/windmilleng/servantes/fe'),
-    restart_container(),
-  ]
-)
-
-docker_build('hypothesizer', 'hypothesizer',
-  live_update=[
-    sync('hypothesizer', '/app'),
-    run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'),
-    # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
-  ]
-)
-docker_build('fortune', 'fortune',
-  live_update=[
-    sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
-    run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
-    run('go install github.com/windmilleng/servantes/fortune'),
-    restart_container(),
-  ]
-)
-docker_build('spoonerisms', 'spoonerisms',
-  live_update=[
-    sync('spoonerisms/src', '/app'),
-    sync('spoonerisms/package.json', '/app/package.json'),
-    sync('spoonerisms/yarn.lock', '/app/yarn.lock'),
-    run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']),
-    restart_container(),
-  ]
-)
-
-# These two services run on the same container -- we can live update them both!
-docker_build('doggos', 'doggos',
-  live_update=[
-    sync('doggos', '/go/src/github.com/windmilleng/servantes/doggos'),
-    run('go install github.com/windmilleng/servantes/doggos'),
-    restart_container(),
-])
-docker_build('sidecar', 'sidecar',
-  live_update=[
-    sync('sidecar/src/', '/src/'),
-    run('cargo build -Z unstable-options --out-dir /target/release'),
-    restart_container(),
-  ])
-
-## Part 3: Resources
-def add_ports(): # we want to add local ports to each service, starting at 9000
-  port = 9000
-  for name in ['fe', 'vigoda', 'snack', 'doggos', 'fortune', 'hypothesizer', 'spoonerisms', 'emoji', 'words', 'secrets']:
-    k8s_resource(name, port_forwards=port)
-    port += 1
-
-add_ports()
-
-## Part 4: other use cases
-
-# here's a k8s_resource with only YAML and no associated docker_build that we
-# can still port-forward. You can run, manipulate, and see logs for k8s
-# resources out of the box!
-k8s_resource('hello-world', port_forwards=9999)
+k8s_resource('vigoda', port_forwards=9000)
 
 # strip off the $USER- that we prepend to all deployment names
 def resource_name(id):
