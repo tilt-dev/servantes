@@ -1,0 +1,9 @@
+# Emacs temp files
+.#*
+
+# Idea temp files
+.idea/
+
+# vim temp files
+.*.swp
+.*.swx

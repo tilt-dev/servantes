@@ -61,6 +61,8 @@ yamls = [
   'deploy/sleeper.yaml',
   'deploy/hello_world.yaml',
   'deploy/tick.yaml',
+  'deploy/random.yaml',
+  'deploy/random-service.yaml',
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
@@ -74,6 +76,7 @@ docker_build('emoji', 'emoji')
 docker_build('words', 'words')
 docker_build('secrets', 'secrets')
 docker_build('sleep', 'sleeper')
+docker_build('random', 'random')
 
 enable_feature('multiple_containers_per_pod')
 
@@ -128,7 +131,7 @@ docker_build('sidecar', 'sidecar',
 ## Part 3: Resources
 def add_ports(): # we want to add local ports to each service, starting at 9000
   port = 9000
-  for name in ['fe', 'vigoda', 'snack', 'doggos', 'fortune', 'hypothesizer', 'spoonerisms', 'emoji', 'words', 'secrets']:
+  for name in ['fe', 'vigoda', 'snack', 'doggos', 'fortune', 'hypothesizer', 'spoonerisms', 'emoji', 'words', 'secrets', 'random']:
     k8s_resource(name, port_forwards=port)
     port += 1
 
