@@ -17,7 +17,7 @@ func main() {
 		// The next line creates an error on request time; uncomment it to cause an error on request.
 		// log.Fatal("NullPointerError trying to service a request")
 		snacks := [...]string{
-			"Gobstoppers",
+			"Snack 1",
 		}
 
 		resp, err := http.PostForm(

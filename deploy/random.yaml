@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: varowner-random
+  labels:
+    app: random
+    owner: varowner
+spec:
+  selector:
+    matchLabels:
+      app: random
+      owner: varowner
+  template:
+    metadata:
+      labels:
+        app: random
+        tier: web
+        owner: varowner
+    spec:
+      containers:
+      - name: random
+        image: random
+        command: ["/go/bin/random"]
+        ports:
+        - containerPort: 8083
+        resources:
+          requests:
+            cpu: "10m"
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: varowner-random
+spec:
+  selector:
+    app: random
+    owner: varowner
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8083
