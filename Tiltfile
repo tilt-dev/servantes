@@ -1,7 +1,4 @@
 # -*- mode: Python -*-
-enable_feature("snapshots")
-
-k8s_resource_assembly_version(2)
 
 set_team("3e8e3af3-52e7-4f86-9006-9b1cce9ec85d")
 
@@ -31,8 +28,6 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
-enable_feature("events")
-
 # If you get push errors, you can change the default_registry.
 # Create tilt_option.json with contents: {"default_registry": "gcr.io/my-personal-project"}
 # (with your registry inserted). tilt_option.json is gitignore'd, unlike Tiltfile
@@ -56,12 +51,12 @@ yamls = [
   'deploy/spoonerisms.yaml',
   'deploy/emoji.yaml',
   'deploy/words.yaml',
+  'deploy/random.yaml',
   'deploy/secrets.yaml',
   'deploy/job.yaml',
   'deploy/sleeper.yaml',
   'deploy/hello_world.yaml',
   'deploy/tick.yaml',
-  'deploy/random.yaml',
 ]
 
 k8s_yaml([m4_yaml(f) for f in yamls])
@@ -70,14 +65,11 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 
 # most services are just a simple docker_build
 docker_build('vigoda', 'vigoda')
-docker_build('snack', 'snack')
 docker_build('emoji', 'emoji')
 docker_build('words', 'words')
 docker_build('secrets', 'secrets')
 docker_build('sleep', 'sleeper')
 docker_build('random', 'random')
-
-enable_feature('multiple_containers_per_pod')
 
 # we can add live_update steps on top of a docker_build for super fast in-place updates
 docker_build('fe', 'fe',
@@ -86,6 +78,13 @@ docker_build('fe', 'fe',
     run('go install github.com/windmilleng/servantes/fe'),
     restart_container(),
   ]
+)
+docker_build('snack', 'snack',
+             live_update=[
+               sync('snack', '/go/src/github.com/windmilleng/servantes/snack'),
+               run('go install github.com/windmilleng/servantes/snack'),
+               run('sleep 1'),
+               run('/bin/restart.sh')],
 )
 
 docker_build('hypothesizer', 'hypothesizer',

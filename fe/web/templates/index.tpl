@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Servantes</title>
+  <title>Microservice Demo App - Servantes</title>
   <link href="https://fonts.googleapis.com/css?family=Lora:700|Varela+Round" rel="stylesheet">
 </head>
 <style>
@@ -113,7 +113,7 @@
 </style>
 <body>
   <main>
-    <header>Servantes ✴︎</header>
+    <header>Microservice Demo App - Servantes ✴︎</header>
     <ul class="services">
       {{range $i, $service := .Services}}
         <li class="service-item">

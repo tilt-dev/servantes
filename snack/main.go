@@ -16,12 +16,17 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// The next line creates an error on request time; uncomment it to cause an error on request.
 		// log.Fatal("NullPointerError trying to service a request")
-		snacks := [...]string{
-			"Snack 1",
+		snacks := []string{}
+
+		if len(snacks) == 0 {
+			snacks = append([]string(nil), defaultSnacks...)
 		}
 
+		// Overly-microserviced call to pick a random snack; equivalent to:
+		// rand.Seed(time.Now().Unix())
+		// s := snacks[rand.Intn(len(snacks))]
 		resp, err := http.PostForm(
-			fmt.Sprintf("http://%s-random", os.Getenv("OWNER")), map[string][]string{
+			fmt.Sprintf("http://%s-random/pick_one", os.Getenv("OWNER")), map[string][]string{
 				"data": snacks[:],
 			})
 
@@ -30,8 +35,6 @@ func main() {
 			fmt.Fprintf(w, "error from random server: %v\n", err)
 			return
 		}
-		// rand.Seed(time.Now().Unix())
-		// s := snacks[rand.Intn(len(snacks))]
 
 		t, err := template.ParseFiles(templatePath("index.tpl"))
 		if err != nil {
@@ -41,7 +44,6 @@ func main() {
 		}
 
 		defer resp.Body.Close()
-
 		s, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -64,4 +66,15 @@ func main() {
 func templatePath(f string) string {
 	dir := os.Getenv("TEMPLATE_DIR")
 	return filepath.Join(dir, f)
+}
+
+var defaultSnacks = []string{
+	"Spam Musubi",
+	"Pocky Sticks",
+	"Kasugai Gummy",
+	"Green Tea Mochi",
+	"Shrimp-flavored Chips",
+	"Red Bean Rice Cake",
+	"Pretz Sticks",
+	"Peaches in Agar Jelly",
 }
