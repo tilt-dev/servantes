@@ -16,7 +16,9 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// The next line creates an error on request time; uncomment it to cause an error on request.
 		// log.Fatal("NullPointerError trying to service a request")
-		snacks := []string{}
+		snacks := []string{
+			// Add snacks here
+		}
 
 		if len(snacks) == 0 {
 			snacks = append([]string(nil), defaultSnacks...)
