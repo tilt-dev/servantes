@@ -83,7 +83,6 @@ docker_build('snack', 'snack',
              live_update=[
                sync('snack', '/go/src/github.com/windmilleng/servantes/snack'),
                run('go install github.com/windmilleng/servantes/snack'),
-               run('sleep 1'),
                run('/bin/restart.sh')],
 )
 
