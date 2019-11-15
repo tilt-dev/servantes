@@ -1,5 +1,7 @@
 # -*- mode: Python -*-
 
+set_team("servantes")
+
 """
 This Tiltfile contains one external-facing service which depends on a number of internal services.
 Here's a quick rundown of these services and their properties:
