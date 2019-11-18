@@ -17,9 +17,6 @@ Here's a quick rundown of these services and their properties:
 * Doggos
   * Language: Go
   * Other notes: Has a JS component, and a sidecar that yells a lot
-* Fortune
-  * Language: Go
-  * Other notes: Uses protobufs
 * Hypothesizer
   * Language: Python
   * Other notes: does a `pip install` for package dependencies. Reinstalls dependencies, only if the dependencies have changed.
@@ -46,7 +43,6 @@ yamls = [
   'deploy/vigoda.yaml',
   'deploy/snack.yaml',
   'deploy/doggos.yaml',
-  'deploy/fortune.yaml',
   'deploy/hypothesizer.yaml',
   'deploy/spoonerisms.yaml',
   'deploy/emoji.yaml',
@@ -93,14 +89,7 @@ docker_build('hypothesizer', 'hypothesizer',
     # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
   ]
 )
-docker_build('fortune', 'fortune',
-  live_update=[
-    sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
-    run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
-    run('go install github.com/windmilleng/servantes/fortune'),
-    restart_container(),
-  ]
-)
+
 docker_build('spoonerisms', 'spoonerisms',
   live_update=[
     sync('spoonerisms/src', '/app'),
@@ -128,7 +117,7 @@ docker_build('sidecar', 'sidecar',
 ## Part 3: Resources
 def add_ports(): # we want to add local ports to each service, starting at 9000
   port = 9000
-  for name in ['fe', 'vigoda', 'snack', 'doggos', 'fortune', 'hypothesizer', 'spoonerisms', 'emoji', 'words', 'secrets', 'random']:
+  for name in ['fe', 'vigoda', 'snack', 'doggos', 'hypothesizer', 'spoonerisms', 'emoji', 'words', 'secrets', 'random']:
     k8s_resource(name, port_forwards=port)
     port += 1
 
