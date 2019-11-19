@@ -28,7 +28,6 @@ var ServiceSpecs = []ServiceSpec{
 	{"vigoda", 9001},
 	{"snack", 9002},
 	{"doggos", 9003},
-	{"fortune", 9004},
 	{"hypothesizer", 9005},
 	{"spoonerisms", 9006},
 	{"emoji", 9007},

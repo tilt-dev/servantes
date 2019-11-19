@@ -1,9 +1,6 @@
 # -*- mode: Python -*-
-enable_feature("snapshots")
 
-k8s_resource_assembly_version(2)
-
-set_team("3e8e3af3-52e7-4f86-9006-9b1cce9ec85d")
+set_team("servantes")
 
 """
 This Tiltfile contains one external-facing service which depends on a number of internal services.
@@ -20,9 +17,6 @@ Here's a quick rundown of these services and their properties:
 * Doggos
   * Language: Go
   * Other notes: Has a JS component, and a sidecar that yells a lot
-* Fortune
-  * Language: Go
-  * Other notes: Uses protobufs
 * Hypothesizer
   * Language: Python
   * Other notes: does a `pip install` for package dependencies. Reinstalls dependencies, only if the dependencies have changed.
@@ -31,15 +25,13 @@ Here's a quick rundown of these services and their properties:
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
 
-enable_feature("events")
-
 # If you get push errors, you can change the default_registry.
 # Create tilt_option.json with contents: {"default_registry": "gcr.io/my-personal-project"}
 # (with your registry inserted). tilt_option.json is gitignore'd, unlike Tiltfile
 default_registry(read_json('tilt_option.json', {})
                  .get('default_registry', 'gcr.io/windmill-public-containers/servantes'))
 
-username = str(local('whoami')).rstrip('\n')
+username = str(local('whoami')).rstrip('\n').lower()
 
 def m4_yaml(file):
   read_file(file)
@@ -51,11 +43,11 @@ yamls = [
   'deploy/vigoda.yaml',
   'deploy/snack.yaml',
   'deploy/doggos.yaml',
-  'deploy/fortune.yaml',
   'deploy/hypothesizer.yaml',
   'deploy/spoonerisms.yaml',
   'deploy/emoji.yaml',
   'deploy/words.yaml',
+  'deploy/random.yaml',
   'deploy/secrets.yaml',
   'deploy/job.yaml',
   'deploy/sleeper.yaml',
@@ -69,13 +61,11 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 
 # most services are just a simple docker_build
 docker_build('vigoda', 'vigoda')
-docker_build('snack', 'snack')
 docker_build('emoji', 'emoji')
 docker_build('words', 'words')
 docker_build('secrets', 'secrets')
 docker_build('sleep', 'sleeper')
-
-enable_feature('multiple_containers_per_pod')
+docker_build('random', 'random')
 
 # we can add live_update steps on top of a docker_build for super fast in-place updates
 docker_build('fe', 'fe',
@@ -85,6 +75,12 @@ docker_build('fe', 'fe',
     restart_container(),
   ]
 )
+docker_build('snack', 'snack',
+             live_update=[
+               sync('snack', '/go/src/github.com/windmilleng/servantes/snack'),
+               run('go install github.com/windmilleng/servantes/snack'),
+               run('/bin/restart.sh')],
+)
 
 docker_build('hypothesizer', 'hypothesizer',
   live_update=[
@@ -93,14 +89,7 @@ docker_build('hypothesizer', 'hypothesizer',
     # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
   ]
 )
-docker_build('fortune', 'fortune',
-  live_update=[
-    sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
-    run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
-    run('go install github.com/windmilleng/servantes/fortune'),
-    restart_container(),
-  ]
-)
+
 docker_build('spoonerisms', 'spoonerisms',
   live_update=[
     sync('spoonerisms/src', '/app'),
@@ -128,7 +117,7 @@ docker_build('sidecar', 'sidecar',
 ## Part 3: Resources
 def add_ports(): # we want to add local ports to each service, starting at 9000
   port = 9000
-  for name in ['fe', 'vigoda', 'snack', 'doggos', 'fortune', 'hypothesizer', 'spoonerisms', 'emoji', 'words', 'secrets']:
+  for name in ['fe', 'vigoda', 'snack', 'doggos', 'hypothesizer', 'spoonerisms', 'emoji', 'words', 'secrets', 'random']:
     k8s_resource(name, port_forwards=port)
     port += 1
 
