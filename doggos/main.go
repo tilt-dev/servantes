@@ -13,7 +13,7 @@ import (
 func main() {
 	go func() {
 		for {
-			time.Sleep(3200 * time.Millisecond)
+			time.Sleep(10000 * time.Millisecond)
 			log.Printf("Heartbeat")
 		}
 	}()
