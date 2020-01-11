@@ -37,7 +37,7 @@ func main() {
 	})
 
 	log.Println("Starting Vigoda Health Check Service on :8081")
-	http.ListenAndServe(":8081", nil)
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
 
 func templatePath(f string) string {
