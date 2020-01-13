@@ -47,7 +47,7 @@ func main() {
 	})
 
 	log.Println("Starting Snack Service on :8083")
-	http.ListenAndServe(":8083", nil)
+	log.Fatal(http.ListenAndServe(":8083", nil))
 }
 
 func templatePath(f string) string {
