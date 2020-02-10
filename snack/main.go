@@ -17,8 +17,8 @@ func main() {
 		// The next line creates an error on request time; uncomment it to cause an error on request.
 		// log.Fatal("NullPointerError trying to service a request")
 		snacks := []string{
-			// Add snacks here
-		}
+		    "gobstoppers",
+        }
 
 		if len(snacks) == 0 {
 			snacks = append([]string(nil), defaultSnacks...)
