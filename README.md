@@ -4,10 +4,12 @@ A microservice app that demonstrates the power of [Tilt](https://tilt.build).
 (Like Miguel de Cervantes, but with servers!)
 
 ## Quick start
-1. [Install `tilt`](https://github.com/windmilleng/tilt#installing)
-2. `git clone git@github.com:windmilleng/servantes.git`
-3. `cd servantes`
-4. `tilt up`
+1. [Install `tilt`](https://docs.tilt.dev/install.html)
+1. Start [a local Kubernetes cluster](https://docs.tilt.dev/choosing_clusters.html)
+1. Verify you have `m4` (either through XCode Command Line Tools on Mac or `apt install m4` on Linux)
+1. `git clone git@github.com:windmilleng/servantes.git`
+1. `cd servantes`
+1. `tilt up`
 
 This will deploy several microservice apps in to the default namespace of your current kubernetes cluster. Use the arrow keys to navigate between services in the Tilt HUD. Hit 'b' to open a service in the (B)rowser; the service `fe` is the frontend, and the most interesting to look at.
 
