@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -10,7 +11,10 @@ import (
 	"time"
 )
 
+var stuff = flag.String("stuff", "unset", "say some stuff")
+
 func main() {
+	flag.Parse()
 	go func() {
 		for {
 			time.Sleep(2 * time.Second)
@@ -37,6 +41,7 @@ func main() {
 	})
 
 	log.Println("Starting Vigoda Health Check Service on :8081")
+	log.Printf("\t'--stuff' value: %s", *stuff)
 	log.Fatal(http.ListenAndServe(":8081", nil))
 }
 

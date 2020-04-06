@@ -1,9 +1,7 @@
 # -*- mode: Python -*-
-enable_feature("team_alerts")
-
 docker_compose('docker-compose.yml')
 
-docker_build('vigoda_for_dc', 'vigoda', dockerfile='vigoda/Dockerfile.dc')
+docker_build('vigoda_for_dc', 'vigoda', dockerfile='vigoda/Dockerfile.dc', entrypoint='/go/bin/vigoda --stuff something')
 dc_resource('vigoda', image='vigoda_for_dc')
 
 docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc',
