@@ -27,3 +27,4 @@ api/*/*.pb.go
 # vim temp files
 .*.swp
 .*.swx
+tilt_modules
