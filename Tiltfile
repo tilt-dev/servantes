@@ -68,7 +68,7 @@ k8s_yaml([m4_yaml(f) for f in yamls])
 ## Part 2: Images
 
 # most services are just a simple docker_build
-docker_build('vigoda', 'vigoda')
+docker_build('vigoda', 'vigoda', entrypoint='/go/bin/vigoda')
 docker_build('snack', 'snack')
 docker_build('emoji', 'emoji')
 docker_build('words', 'words')
@@ -118,6 +118,7 @@ docker_build('doggos', 'doggos',
     run('go install github.com/windmilleng/servantes/doggos'),
     restart_container(),
 ])
+
 docker_build('sidecar', 'sidecar',
   live_update=[
     sync('sidecar/src/', '/src/'),

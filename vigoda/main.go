@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -10,11 +11,14 @@ import (
 	"time"
 )
 
+var stuff = flag.String("stuff", "unset", "say some stuff")
+
 func main() {
+	flag.Parse()
 	go func() {
 		for {
-			time.Sleep(2 * time.Second)
-			log.Printf("Server status: All good")
+			log.Printf("stuff = '%s'", *stuff)
+			time.Sleep(3 * time.Second)
 		}
 	}()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
