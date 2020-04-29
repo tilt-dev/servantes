@@ -1,5 +1,6 @@
 # -*- mode: Python -*-
 enable_feature("snapshots")
+enable_feature("events")
 
 k8s_resource_assembly_version(2)
 
@@ -30,8 +31,7 @@ Here's a quick rundown of these services and their properties:
   * Language: JavaScript
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
-
-enable_feature("events")
+load('ext://restart_process', 'docker_build_with_restart')
 
 # If you get push errors, you can change the default_registry.
 # Create tilt_option.json with contents: {"default_registry": "gcr.io/my-personal-project"}
@@ -78,11 +78,10 @@ docker_build('sleep', 'sleeper')
 enable_feature('multiple_containers_per_pod')
 
 # we can add live_update steps on top of a docker_build for super fast in-place updates
-docker_build('fe', 'fe',
+docker_build_with_restart('fe', 'fe', '/go/bin/fe',
   live_update=[
     sync('fe', '/go/src/github.com/windmilleng/servantes/fe'),
     run('go install github.com/windmilleng/servantes/fe'),
-    restart_container(),
   ]
 )
 
@@ -93,36 +92,34 @@ docker_build('hypothesizer', 'hypothesizer',
     # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
   ]
 )
-docker_build('fortune', 'fortune',
+docker_build_with_restart('fortune', 'fortune', '/go/bin/fortune',
   live_update=[
     sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
     run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
     run('go install github.com/windmilleng/servantes/fortune'),
-    restart_container(),
   ]
 )
-docker_build('spoonerisms', 'spoonerisms',
+
+docker_build_with_restart('spoonerisms', 'spoonerisms', 'node /app/index.js',
   live_update=[
     sync('spoonerisms/src', '/app'),
     sync('spoonerisms/package.json', '/app/package.json'),
     sync('spoonerisms/yarn.lock', '/app/yarn.lock'),
     run('cd /app && yarn install', trigger=['spoonerisms/package.json', 'spoonerisms/yarn.lock']),
-    restart_container(),
   ]
 )
 
 # These two services run on the same container -- we can live update them both!
-docker_build('doggos', 'doggos',
+docker_build_with_restart('doggos', 'doggos', '/go/bin/doggos',
   live_update=[
     sync('doggos', '/go/src/github.com/windmilleng/servantes/doggos'),
     run('go install github.com/windmilleng/servantes/doggos'),
-    restart_container(),
 ])
-docker_build('sidecar', 'sidecar',
+
+docker_build_with_restart('sidecar', 'sidecar', 'target/release/sidecar',
   live_update=[
     sync('sidecar/src/', '/src/'),
     run('cargo build -Z unstable-options --out-dir /target/release'),
-    restart_container(),
   ])
 
 ## Part 3: Resources
