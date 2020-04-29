@@ -1,5 +1,6 @@
 # -*- mode: Python -*-
 enable_feature("snapshots")
+enable_feature("events")
 
 k8s_resource_assembly_version(2)
 
@@ -30,12 +31,7 @@ Here's a quick rundown of these services and their properties:
   * Language: JavaScript
   * Other notes: Uses yarn. Does a `yarn install` for package dependencies, only if the dependencies have changed
 """
-
-enable_feature("events")
-
 load('ext://restart_process', 'docker_build_with_restart')
-update_settings(5)
-
 
 # If you get push errors, you can change the default_registry.
 # Create tilt_option.json with contents: {"default_registry": "gcr.io/my-personal-project"}
