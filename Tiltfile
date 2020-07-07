@@ -89,7 +89,6 @@ docker_build('hypothesizer', 'hypothesizer',
   live_update=[
     sync('hypothesizer', '/app'),
     run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'),
-    # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
   ]
 )
 docker_build_with_restart('fortune', 'fortune', '/go/bin/fortune',
