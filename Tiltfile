@@ -1,8 +1,5 @@
 # -*- mode: Python -*-
 enable_feature("snapshots")
-enable_feature("events")
-
-k8s_resource_assembly_version(2)
 
 set_team("3e8e3af3-52e7-4f86-9006-9b1cce9ec85d")
 
@@ -75,8 +72,6 @@ docker_build('words', 'words')
 docker_build('secrets', 'secrets')
 docker_build('sleep', 'sleeper')
 
-enable_feature('multiple_containers_per_pod')
-
 # we can add live_update steps on top of a docker_build for super fast in-place updates
 docker_build_with_restart('fe', 'fe', '/go/bin/fe',
   live_update=[
@@ -89,7 +84,6 @@ docker_build('hypothesizer', 'hypothesizer',
   live_update=[
     sync('hypothesizer', '/app'),
     run('cd /app && pip install -r requirements.txt', trigger='hypothesizer/requirements.txt'),
-    # no restart_container needed because hypothesizer is a flask app which hot-reloads its code
   ]
 )
 docker_build_with_restart('fortune', 'fortune', '/go/bin/fortune',
