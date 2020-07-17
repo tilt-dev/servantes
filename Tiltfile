@@ -104,7 +104,8 @@ docker_build_with_restart('spoonerisms', 'spoonerisms', 'node /app/index.js',
 )
 
 # These two services run on the same container -- we can live update them both!
-docker_build_with_restart('doggos', 'doggos', '/go/bin/doggos',
+docker_build_with_restart('doggos', './doggos', '/go/bin/doggos',
+                          dockerfile='deploy/Dockerfile.doggos',
   live_update=[
     sync('doggos', '/go/src/github.com/windmilleng/servantes/doggos'),
     run('go install github.com/windmilleng/servantes/doggos'),
