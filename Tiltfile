@@ -116,14 +116,10 @@ docker_build_with_restart('sidecar', 'sidecar', 'target/release/sidecar',
     run('cargo build -Z unstable-options --out-dir /target/release'),
   ])
 
-## Part 3: Resources
-def add_ports(): # we want to add local ports to each service, starting at 9000
-  port = 9000
-  for name in ['fe', 'vigoda', 'snack', 'doggos', 'fortune', 'hypothesizer', 'spoonerisms', 'emoji', 'words', 'secrets']:
-    k8s_resource(name, port_forwards=port)
-    port += 1
+k8s_resource('doggos', port_forwards=[port_forward(8999, 8082, 'debugger'), port_forward(9000,8083,'app')])
+k8s_resource('vigoda', port_forwards=9001)
+# k8s_resource('hypothesizer', port_forwards=port_forward(9002, name='maybe'))
 
-add_ports()
 
 ## Part 4: other use cases
 
