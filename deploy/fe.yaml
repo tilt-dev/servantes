@@ -22,7 +22,7 @@ spec:
         image: fe
         env:
         - name: TEMPLATE_DIR
-          value: "/go/src/github.com/windmilleng/servantes/fe/web/templates"
+          value: "/go/src/github.com/tilt-dev/servantes/fe/web/templates"
         ports:
         - containerPort: 8080
         resources:

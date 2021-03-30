@@ -75,8 +75,8 @@ docker_build('sleep', 'sleeper')
 # we can add live_update steps on top of a docker_build for super fast in-place updates
 docker_build_with_restart('fe', 'fe', '/go/bin/fe',
   live_update=[
-    sync('fe', '/go/src/github.com/windmilleng/servantes/fe'),
-    run('go install github.com/windmilleng/servantes/fe'),
+    sync('fe', '/go/src/github.com/tilt-dev/servantes/fe'),
+    run('go install github.com/tilt-dev/servantes/fe'),
   ]
 )
 
@@ -88,9 +88,9 @@ docker_build('hypothesizer', 'hypothesizer',
 )
 docker_build_with_restart('fortune', 'fortune', '/go/bin/fortune',
   live_update=[
-    sync('fortune', '/go/src/github.com/windmilleng/servantes/fortune'),
-    run('cd src/github.com/windmilleng/servantes/fortune && make proto'),
-    run('go install github.com/windmilleng/servantes/fortune'),
+    sync('fortune', '/go/src/github.com/tilt-dev/servantes/fortune'),
+    run('cd src/github.com/tilt-dev/servantes/fortune && make proto'),
+    run('go install github.com/tilt-dev/servantes/fortune'),
   ]
 )
 
@@ -106,8 +106,8 @@ docker_build_with_restart('spoonerisms', 'spoonerisms', 'node /app/index.js',
 # These two services run on the same container -- we can live update them both!
 docker_build_with_restart('doggos', 'doggos', '/go/bin/doggos',
   live_update=[
-    sync('doggos', '/go/src/github.com/windmilleng/servantes/doggos'),
-    run('go install github.com/windmilleng/servantes/doggos'),
+    sync('doggos', '/go/src/github.com/tilt-dev/servantes/doggos'),
+    run('go install github.com/tilt-dev/servantes/doggos'),
 ])
 
 docker_build_with_restart('sidecar', 'sidecar', 'target/release/sidecar',

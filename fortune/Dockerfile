@@ -10,8 +10,8 @@ RUN wget https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}
 
 RUN go get github.com/golang/protobuf/protoc-gen-go
 
-ADD . /go/src/github.com/windmilleng/servantes/fortune
-RUN cd /go/src/github.com/windmilleng/servantes/fortune && make proto
-RUN go install github.com/windmilleng/servantes/fortune
+ADD . /go/src/github.com/tilt-dev/servantes/fortune
+RUN cd /go/src/github.com/tilt-dev/servantes/fortune && make proto
+RUN go install github.com/tilt-dev/servantes/fortune
 
 ENTRYPOINT /go/bin/fortune

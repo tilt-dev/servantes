@@ -23,7 +23,7 @@ spec:
         command: ["/go/bin/emoji"]
         env:
         - name: TEMPLATE_DIR
-          value: "/go/src/github.com/windmilleng/servantes/emoji/web/templates"
+          value: "/go/src/github.com/tilt-dev/servantes/emoji/web/templates"
         ports:
         - containerPort: 8081
         resources:

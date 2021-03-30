@@ -6,7 +6,7 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - TEMPLATE_DIR=/go/src/github.com/windmilleng/servantes/snack/web/templates
+      - TEMPLATE_DIR=/go/src/github.com/tilt-dev/servantes/snack/web/templates
   spoonerisms:
     build:
       context: ./spoonerisms
@@ -29,4 +29,4 @@ services:
     ports:
       - "9008:8082"
     environment:
-      - TEMPLATE_DIR=/go/src/github.com/windmilleng/servantes/fortune/web/templates
+      - TEMPLATE_DIR=/go/src/github.com/tilt-dev/servantes/fortune/web/templates

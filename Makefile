@@ -1,9 +1,12 @@
-.PHONY: all proto test tilt up watch docker-ci
+.PHONY: all proto test tilt up watch docker-ci integration
 
 all: proto test
 
 test: proto
 	go build ./...
+
+integration: test
+	tilt ci
 
 proto:
 	cd fortune && make proto
@@ -14,6 +17,3 @@ watch:
 up:
 	tilt up servantes
 
-docker-ci:
-	cd .circleci && docker build -t gcr.io/windmill-public-containers/servantes-ci .
-	docker push gcr.io/windmill-public-containers/servantes-ci

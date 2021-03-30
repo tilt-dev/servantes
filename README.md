@@ -7,7 +7,7 @@ A microservice app that demonstrates the power of [Tilt](https://tilt.build).
 1. [Install `tilt`](https://docs.tilt.dev/install.html)
 1. Start [a local Kubernetes cluster](https://docs.tilt.dev/choosing_clusters.html)
 1. Verify you have `m4` (either through XCode Command Line Tools on Mac or `apt install m4` on Linux)
-1. `git clone git@github.com:windmilleng/servantes.git`
+1. `git clone git@github.com:tilt-dev/servantes.git`
 1. `cd servantes`
 1. `tilt up`
 
