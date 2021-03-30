@@ -36,7 +36,7 @@ load('ext://restart_process', 'docker_build_with_restart')
 default_registry(read_json('tilt_option.json', {})
                  .get('default_registry', 'gcr.io/windmill-public-containers/servantes'))
 
-username = str(local('whoami')).rstrip('\n')
+username = str(local('whoami')).rstrip('\n').lower()
 
 def m4_yaml(file):
   read_file(file)
