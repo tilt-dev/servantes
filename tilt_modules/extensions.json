@@ -3,7 +3,7 @@
     {
       "Name": "restart_process",
       "GitCommitHash": "2158573741bc54bcd7e186b097e21f396e3d19b2",
-      "ExtensionRegistry": "https://github.com/windmilleng/tilt-extensions",
+      "ExtensionRegistry": "https://github.com/tilt-dev/tilt-extensions",
       "TimeFetched": "2020-04-29T13:03:04.547844-04:00"
     }
   ]

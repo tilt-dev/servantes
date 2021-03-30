@@ -8,12 +8,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/windmilleng/servantes/fortune/api"
+	"github.com/tilt-dev/servantes/fortune/api"
 )
 
 func main() {
 	f := api.Fortune{
-		Text: "you will have a nice day",
+		Text:   "you will have a nice day",
 		Secret: os.Getenv("THE_SECRET"),
 	}
 

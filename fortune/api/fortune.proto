@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package api;
 
+option go_package = "github.com/tilt-dev/servantes/api";
+
 message Fortune {
   string text = 1;
   string secret = 2;

@@ -1,6 +1,6 @@
-FROM golang:1.10
+FROM golang:1.10-alpine
 
-ADD . /go/src/github.com/windmilleng/servantes/vigoda
-RUN go install github.com/windmilleng/servantes/vigoda
+ADD . /go/src/github.com/tilt-dev/servantes/vigoda
+RUN go install github.com/tilt-dev/servantes/vigoda
 
 ENTRYPOINT /go/bin/vigoda

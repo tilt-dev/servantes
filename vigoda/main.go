@@ -13,7 +13,7 @@ import (
 func main() {
 	go func() {
 		for {
-			time.Sleep(2 * time.Second)
+			time.Sleep(12 * time.Second)
 			log.Printf("Server status: All good")
 		}
 	}()

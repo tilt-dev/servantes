@@ -1,10 +1,24 @@
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
-      - image: gcr.io/windmill-public-containers/servantes-ci
-    working_directory: /go/src/github.com/windmilleng/servantes
+      - image: tiltdev/tilt:latest
+    working_directory: /root/go/src/github.com/tilt-dev/servantes
+
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 19.03.12
+      - run: apt update && apt install -y unzip time make wget m4 build-essential golang
+      - run: |
+          set -ex
+          export PROTOC_VERSION="3.5.1"
+          wget https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip && \
+            unzip protoc-${PROTOC_VERSION}-linux-x86_64.zip -d protoc && \
+            mv protoc/bin/protoc /usr/bin/protoc
+
       - run: echo 'export PATH=~/go/bin:$PATH' >> $BASH_ENV
-      - run: make all
+      - run: cd .. && go get github.com/golang/protobuf/protoc-gen-go
+      - run: make test
+          
+      - run: ctlptl create cluster kind --registry=ctlptl-registry && make integration

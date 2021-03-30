@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/windmilleng/servantes/emoji/pkg/emoji"
+	"github.com/tilt-dev/servantes/emoji/pkg/emoji"
 )
 
 type TemplateArgs struct {
