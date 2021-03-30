@@ -1,4 +1,7 @@
 # servantes
+
+[![Build Status](https://circleci.com/gh/tilt-dev/servantes/tree/master.svg?style=shield)](https://circleci.com/gh/tilt-dev/servantes)
+
 A microservice app that demonstrates the power of [Tilt](https://tilt.build).
 
 (Like Miguel de Cervantes, but with servers!)
