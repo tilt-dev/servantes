@@ -1,10 +1,10 @@
 # -*- mode: Python -*-
 docker_compose('docker-compose.yml')
 
-docker_build('vigoda_for_dc', 'vigoda', dockerfile='vigoda/Dockerfile.dc')
+docker_build('vigoda_for_dc', 'vigoda')
 dc_resource('vigoda', image='vigoda_for_dc')
 
-docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc',
+docker_build('fortune_for_dc', 'fortune',
   live_update = [
     sync('fortune', '/go/src/github.com/tilt-dev/servantes/fortune'),
     run('cd src/github.com/tilt-dev/servantes/fortune && make proto'),
