@@ -1,4 +1,4 @@
-FROM rust:1.37.0-alpine
+FROM rust:1.56.0-alpine
 
 COPY ./ ./
 

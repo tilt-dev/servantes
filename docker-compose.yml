@@ -11,9 +11,7 @@ services:
     build:
       context: ./spoonerisms
       dockerfile: ../Dockerfile.js.base
-    command: >
-      bash -c "yarn --cwd /app install
-      && node /app/index.js"
+    command: sh -c "yarn --cwd /app install && node /app/index.js"
     volumes:
       - ./spoonerisms/src:/app
       - ./spoonerisms/package.json:/app/package.json
@@ -24,6 +22,8 @@ services:
     image: vigoda_for_dc
     ports:
       - "9007:8081"
+    environment:
+      - TEMPLATE_DIR=/go/src/github.com/tilt-dev/servantes/vigoda/web/templates
   fortune:
     image: fortune_for_dc
     ports:

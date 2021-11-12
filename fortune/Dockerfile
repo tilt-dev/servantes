@@ -1,17 +1,11 @@
-FROM golang:1.10
+FROM golang:1.17
 
-RUN apt update && apt install -y unzip time make
+RUN apt update && apt install -y unzip time make protobuf-compiler
 
-ENV PROTOC_VERSION 3.5.1
-
-RUN wget https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip && \
-  unzip protoc-${PROTOC_VERSION}-linux-x86_64.zip -d protoc && \
-  mv protoc/bin/protoc /usr/bin/protoc
-
-RUN go get github.com/golang/protobuf/protoc-gen-go
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
 ADD . /go/src/github.com/tilt-dev/servantes/fortune
 RUN cd /go/src/github.com/tilt-dev/servantes/fortune && make proto
-RUN go install github.com/tilt-dev/servantes/fortune
+RUN cd /go/src/github.com/tilt-dev/servantes/fortune && go install .
 
 ENTRYPOINT /go/bin/fortune

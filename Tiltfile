@@ -30,6 +30,11 @@ Here's a quick rundown of these services and their properties:
 """
 load('ext://restart_process', 'docker_build_with_restart')
 
+# https://app.shortcut.com/windmill/epic/12941/image-build-cluster-platform-detection
+# doing this in tiltfile until Tilt does it automatically
+platform = str(local("kubectl get node -ojsonpath='{.items[0].status.nodeInfo.operatingSystem}/{.items[0].status.nodeInfo.architecture}'"))
+os.putenv('DOCKER_DEFAULT_PLATFORM', platform)
+
 # If you get push errors, you can change the default_registry.
 # Create tilt_option.json with contents: {"default_registry": "gcr.io/my-personal-project"}
 # (with your registry inserted). tilt_option.json is gitignore'd, unlike Tiltfile
