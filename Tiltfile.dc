@@ -8,8 +8,9 @@ docker_build('fortune_for_dc', 'fortune', dockerfile='fortune/Dockerfile.dc',
   live_update = [
     sync('fortune', '/go/src/github.com/tilt-dev/servantes/fortune'),
     run('cd src/github.com/tilt-dev/servantes/fortune && make proto'),
-    run('go install github.com/tilt-dev/servantes/fortune'),
-    restart_container(),
-  ])
+    run('cd /go/src/github.com/tilt-dev/servantes/fortune && go install .'),
+    # no restart here :( docker_build_with_restart not supported for DC
+  ]
+)
 
 dc_resource('fortune', image='fortune_for_dc')
