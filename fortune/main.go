@@ -33,7 +33,7 @@ func main() {
 		}
 	})
 
-	log.Println("Starting Fortune Service on :8082")
+	log.Println("Starting Fortune Service on :8082!!")
 	log.Fatal(http.ListenAndServe(":8082", nil))
 }
 
